@@ -4,6 +4,7 @@ import Router from "vue-router";
 import girder from "./girder";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
+import SiteView from "@/views/SiteView";
 import ItemView from "@/views/ItemView.vue";
 
 Vue.use(Router);
@@ -33,6 +34,12 @@ export default new Router({
       path: "/item/:id?",
       name: "ItemView",
       component: ItemView,
+      beforeEnter
+    },
+    {
+      path: "/site/:name?",
+      name: "SiteView",
+      component: SiteView,
       beforeEnter
     }
   ]

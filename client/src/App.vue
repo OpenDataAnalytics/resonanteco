@@ -17,7 +17,7 @@ export default {
 
 <template>
   <v-app id="app">
-    <keep-alive>
+    <keep-alive include="Home">
       <router-view />
     </keep-alive>
   </v-app>

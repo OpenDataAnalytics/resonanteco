@@ -47,7 +47,7 @@ export default {
   },
   activated() {
     this.id = this.$route.params.id;
-  },
+  }
 };
 </script>
 
@@ -61,10 +61,11 @@ export default {
             :headers="headers"
             :items="rows"
             :pagination.sync="pagination"
-            :rows-per-page-items="[5,10,15]">
-            <template v-slot:items="{item}">
-              <td>{{item.key}}</td>
-              <td>{{item.value}}</td>
+            :rows-per-page-items="[5, 10, 15]"
+          >
+            <template v-slot:items="{ item }">
+              <td>{{ item.key }}</td>
+              <td>{{ item.value }}</td>
             </template>
           </v-data-table>
         </v-flex>

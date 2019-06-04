@@ -28,13 +28,13 @@ class Soil(Resource):
     def addMeta(self, folder, data, params):
         metas = json.loads(data['text'])
         for meta in metas:
+            item = Item().createItem(meta['_id'], self.getCurrentUser(), folder, meta['file_name'])
+            Item().setMetadata(item, meta, allowNull=True)
             try:
                 meta['metadata']['gold_data']['latitude']
             except:
+                Item().save(item)
                 continue
-            item = Item().createItem(meta['_id'], self.getCurrentUser(), folder, meta['file_name'])
-            Item().setMetadata(item, meta, allowNull=True)
-            # Item().save(item)
             latitude = float(meta['metadata']['gold_data']['latitude'])
             longitude = float(meta['metadata']['gold_data']['longitude'])
             geometa = {

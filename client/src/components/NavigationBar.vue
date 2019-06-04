@@ -15,8 +15,7 @@ export default {
       return process.env.VERSION;
     }
   },
-  methods: {
-  }
+  methods: {}
 };
 </script>
 
@@ -36,15 +35,9 @@ export default {
       :height="64"
       color="transparent"
     >
-      <v-tab
-        to="/">
+      <v-tab to="/">
         Explore
         <v-icon>explore</v-icon>
-      </v-tab>
-      <v-tab
-        to="/item">
-        item
-        <v-icon>mdi-table</v-icon>
       </v-tab>
     </v-tabs>
     <v-spacer></v-spacer>

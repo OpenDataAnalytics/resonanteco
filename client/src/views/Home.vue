@@ -5,6 +5,8 @@ import NavigationBar from "@/components/NavigationBar";
 import { Upload as GirderUpload } from "@girder/components/src/components";
 import MetaUploader from "@/util/MetaUploader";
 
+import eventAggregator from "../util/eventAggregator";
+
 export default {
   name: "Home",
   components: {
@@ -25,6 +27,7 @@ export default {
       filename: "",
       filterGeometry: null,
       filterFilename: null,
+      siteData: null,
       showResultPanel: false,
       pagination: {
         page: 1,
@@ -44,17 +47,26 @@ export default {
         { text: "Filename", value: "meta.file_name" }
       ];
     },
-    filteredItems() {
-      if (!this.itemsByGeometryFilter) {
-        return this.itemsByFilenameFilter ? this.itemsByFilenameFilter : [];
-      } else if (!this.itemsByFilenameFilter) {
-        return this.itemsByGeometryFilter ? this.itemsByGeometryFilter : [];
+    sitesFeature() {
+      var sites = this.sites;
+      if (!this.sites) {
+        return;
       }
-      return intersectionBy(
-        this.itemsByGeometryFilter,
-        this.itemsByFilenameFilter,
-        "_id"
-      );
+      var counts = sites.map(site => site.count);
+      var range = Math.max(...counts) - Math.min(...counts);
+      return {
+        type: "FeatureCollection",
+        features: sites.map(site => {
+          return {
+            type: "Feature",
+            geometry: site.location,
+            properties: {
+              radius: 5 + (25 * site.count) / range,
+              name: site.name
+            }
+          };
+        })
+      };
     }
   },
   asyncComputed: {
@@ -73,36 +85,9 @@ export default {
         })).data[0];
       }
     },
-    itemsByGeometryFilter: {
-      default: null,
-      async get() {
-        var geometry = this.filterGeometry;
-        if (!geometry) {
-          return null;
-        }
-        var { data: items } = await this.girderRest.get("item/geometa", {
-          params: {
-            geojson: geometry,
-            relation: "within"
-          }
-        });
-        return items;
-      }
-    },
-    itemsByFilenameFilter: {
-      default: null,
-      async get() {
-        var filename = this.filterFilename;
-        if (!filename) {
-          return null;
-        }
-        var { data: items } = await this.girderRest.get("item", {
-          params: {
-            text: filename
-          }
-        });
-        return items;
-      }
+    async sites() {
+      var { data: datasets } = await this.girderRest.get("site");
+      return datasets;
     }
   },
   watch: {
@@ -121,21 +106,12 @@ export default {
       this.$nextTick(() => {
         window.dispatchEvent(new Event("resize"));
       }, 100);
-    },
-    filteredItems(value, oldValue) {
-      if (value.length && !oldValue.length) {
-        this.showResultPanel = true;
-      } else if (
-        !this.filterGeometry &&
-        !this.filterFilename &&
-        !value.length &&
-        oldValue.length
-      ) {
-        this.showResultPanel = false;
-      }
     }
   },
-  mounted() {
+  created() {
+    this.featuresClicked = eventAggregator(this.featuresClicked);
+  },
+  async mounted() {
     setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
       window.dispatchEvent(new Event("resize"));
@@ -157,6 +133,20 @@ export default {
     },
     removeFilter(filterName) {
       this[filterName] = null;
+    },
+    featuresClicked(events) {
+      var events = events.map(event => event[0]);
+      var geo = events[0].mouse.geo;
+      this.siteData = {
+        position: [geo.x, geo.y],
+        features: events.map(({ data }) => data)
+      };
+    },
+    closeSitesDialog() {
+      this.siteData = null;
+    },
+    log() {
+      console.log("123");
     }
   }
 };
@@ -167,99 +157,86 @@ export default {
     <NavigationBar />
     <v-container fill-height fluid class="pa-0">
       <v-layout fill-height>
-        <v-flex style="position: relative; flex-grow:5;">
-          <v-speed-dial
-            :top="true"
-            :left="true"
-            direction="bottom"
-            open-on-hover
+        <v-flex style="position: relative;">
+          <v-btn
+            fab
+            small
             absolute
-            style="top:40px;">
-            <template v-slot:activator>
-              <v-btn
-                color="primary"
-                dark
-                fab
-              >
-                <v-icon>add</v-icon>
-              </v-btn>
-            </template>
-            <v-btn fab dark 
-              color="orange" small @click="regionFilterClick">
-              <v-icon>mdi-vector-rectangle</v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              dark
-              small
-              color="green"
-              @click="filenameDialog=true"
-            >
-              <v-icon>mdi-format-text-variant</v-icon>
-            </v-btn>
-          </v-speed-dial>
-          <v-btn fab small absolute left color="primary" style="bottom: 20px;" @click="uploadDialog=true">
+            left
+            color="primary"
+            style="bottom: 20px;"
+            @click="uploadDialog = true"
+          >
             <v-icon>mdi-file-upload</v-icon>
-          </v-btn>
-          <div style="position:absolute; top: 20px; left: 100px; z-index: 1;">
-            <v-chip close v-if="this.filterGeometry" color="light-blue" dark @input="removeFilter('filterGeometry')">Region</v-chip>
-            <v-chip close v-if="this.filterFilename" color="light-blue" dark @input="removeFilter('filterFilename')">{{this.filterFilename}}</v-chip>
-          </div>
-          <v-btn fab small absolute right color="primary" style="top: 20px;" @click="showResultPanel=!showResultPanel">
-            <v-badge color="green" :value="filteredItems.length">
-              <template #badge>
-                <span>{{filteredItems.length}}</span>
-              </template>
-              <v-icon>mdi-table-of-contents</v-icon>
-            </v-badge>
           </v-btn>
           <GeojsMapViewport
             class="map"
             :viewport="viewport"
-            ref="map">
+            ref="map"
+            @click="closeSitesDialog"
+          >
             <GeojsTileLayer
-            url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
-            attribution="© OpenStreetMap contributors, © CARTO"
-            :zIndex="0" />
+              url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+              attribution="© OpenStreetMap contributors, © CARTO"
+              :zIndex="0"
+            />
             <GeojsGeojsonLayer
               :zIndex="1"
-              :geojson="filterGeometry"
+              :geojson="sitesFeature"
+              @feature-click="featuresClicked"
             />
-            <GeojsSimpleAnnotationLayer
-              v-if="editing"
+            <GeojsWidgetLayer
               :zIndex="2"
-              :editing="editing"
-              :geojson.sync="geojson"
-            />
+              v-if="siteData"
+              :position="siteData.position"
+            >
+              <v-card @mousedown.native.stop>
+                <v-toolbar card color="white">
+                  <v-toolbar-title>Sites</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click="closeSitesDialog">
+                    <v-icon>close</v-icon>
+                  </v-btn>
+                </v-toolbar>
+                <v-card-text class="site-content pt-0">
+                  <v-list-tile
+                    class="site-link"
+                    v-for="(feature, i) in siteData.features"
+                    :key="i"
+                    :to="`site/${feature.properties.name}`"
+                    color="primary"
+                  >
+                    <v-list-tile-content>
+                      <v-list-tile-title>{{
+                        feature.properties.name
+                      }}</v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </v-card-text>
+              </v-card>
+            </GeojsWidgetLayer>
           </GeojsMapViewport>
-        </v-flex>
-        <v-flex style="flex-grow:3; flex-basis: 0; min-width: 0;" v-if="showResultPanel">
-          <v-data-table
-            :headers="resultTableHeaders"
-            :items="filteredItems"
-            :pagination.sync="pagination"
-            :rows-per-page-items="[5,10,15]">
-            <template v-slot:items="{item}">
-              <td><router-link :to="`/item/${item._id}`">{{ item.meta._id }}</router-link></td>
-              <td class="text-xs-right">{{ item.meta.file_name }}</td>
-            </template>
-          </v-data-table>
         </v-flex>
       </v-layout>
     </v-container>
-    <v-dialog v-if="dataFolder" v-model="uploadDialog" full-width max-width="500px">
+    <v-dialog
+      v-if="dataFolder"
+      v-model="uploadDialog"
+      full-width
+      max-width="500px"
+    >
       <GirderUpload
         :dest="dataFolder"
         :uploadCls="MetaUploader"
         :multiple="false"
         accept=".json"
         ref="girderUpload"
-        @postUpload="uploadDialog=false"
+        @postUpload="uploadDialog = false"
       />
     </v-dialog>
     <v-dialog v-model="filenameDialog" full-width max-width="300px">
       <v-card>
-        <v-form @submit.prevent='addFilenameFilter'>
+        <v-form @submit.prevent="addFilenameFilter">
           <v-card-title class="headline">
             Filter by file_name
           </v-card-title>
@@ -272,14 +249,11 @@ export default {
             ></v-text-field>
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              type="submit"
-              color="primary"
-            >
+            <v-btn type="submit" color="primary">
               Add
             </v-btn>
           </v-card-actions>
-      </v-form>
+        </v-form>
       </v-card>
     </v-dialog>
   </v-content>
@@ -289,5 +263,13 @@ export default {
 .v-badge__badge {
   top: -15px;
   font-size: 12px;
+}
+
+.site-content {
+  width: 300px;
+}
+
+.site-link:hover {
+  text-decoration: underline;
 }
 </style>

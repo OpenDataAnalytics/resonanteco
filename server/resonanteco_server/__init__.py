@@ -4,6 +4,8 @@ from girder.models.user import User
 from girder.models.item import Item
 
 from .client_webroot import ClientWebroot
+from .record import Record
+from .site import Site
 from .soil import Soil
 
 class GirderPlugin(plugin.GirderPlugin):
@@ -14,4 +16,6 @@ class GirderPlugin(plugin.GirderPlugin):
         info['serverRoot'], info['serverRoot'].girder = (ClientWebroot(),
                                                          info['serverRoot'])
         info['serverRoot'].api = info['serverRoot'].girder.api
+        info['apiRoot'].site = Site()
         info['apiRoot'].soil = Soil()
+        info['apiRoot'].record = Record()
