@@ -1,5 +1,5 @@
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState } from "vuex";
 
 import UserButton from "@/components/girder/UserButton";
 
