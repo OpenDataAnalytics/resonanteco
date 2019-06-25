@@ -1,0 +1,3 @@
+[submodule "submodules/girder_geospatial"]
+	path = submodules/girder_geospatial
+	url = https://github.com/OpenGeoscience/girder_geospatial.git
