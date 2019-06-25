@@ -1,0 +1,275 @@
+Taxonomic Composition
+---------------------
+
+Archaea:Aenigmarchaeota                                     0
+Archaea:Aigarchaeota                                        12
+Archaea:Candidatus Aenigmarchaeota                          0
+Archaea:Candidatus Bathyarchaeota                           0
+Archaea:Candidatus Geoarchaeota                             0
+Archaea:Candidatus Heimdallarchaeota                        0
+Archaea:Candidatus Korarchaeota                             6
+Archaea:Candidatus Lokiarchaeota                            0
+Archaea:Candidatus Micrarchaeota                            1
+Archaea:Candidatus Nanohaloarchaeota                        0
+Archaea:Candidatus Odinarchaeota                            0
+Archaea:Candidatus Parvarchaeota                            0
+Archaea:Candidatus Thorarchaeota                            0
+Archaea:Candidatus Verstraetearchaeota                      0
+Archaea:Candidatus Woesearchaeota                           0
+Archaea:Crenarchaeota                                       65
+Archaea:Diapherotrites                                      3
+Archaea:Euryarchaeota                                       981
+Archaea:Geoarchaeota                                        0
+Archaea:Nanoarchaeota                                       0
+Archaea:Thaumarchaeota                                      76
+Archaea:Thermotogae                                         0
+Archaea:unclassified                                        0
+Bacteria:Acetothermia                                       11
+Bacteria:Acidobacteria                                      45746
+Bacteria:Actinobacteria                                     89060
+Bacteria:Aerophobetes                                       54
+Bacteria:Aminicenantes                                      120
+Bacteria:Aquificae                                          155
+Bacteria:Armatimonadetes                                    508
+Bacteria:Atribacteria                                       46
+Bacteria:BRC1                                               107
+Bacteria:Bacteroidetes                                      21209
+Bacteria:Balneolaeota                                       120
+Bacteria:Caldiserica                                        13
+Bacteria:Caldithrixae                                       70
+Bacteria:Calditrichaeota                                    0
+Bacteria:Calescamantes                                      20
+Bacteria:Candidatus Abawacabacteria                         0
+Bacteria:Candidatus Acetothermia                            5
+Bacteria:Candidatus Adlerbacteria                           0
+Bacteria:Candidatus Aerophobetes                            0
+Bacteria:Candidatus Amesbacteria                            0
+Bacteria:Candidatus Aminicenantes                           0
+Bacteria:Candidatus Andersenbacteria                        0
+Bacteria:Candidatus Atribacteria                            29
+Bacteria:Candidatus Azambacteria                            0
+Bacteria:Candidatus Beckwithbacteria                        0
+Bacteria:Candidatus Berkelbacteria                          0
+Bacteria:Candidatus Blackburnbacteria                       0
+Bacteria:Candidatus Brennerbacteria                         0
+Bacteria:Candidatus Buchananbacteria                        0
+Bacteria:Candidatus Calescamantes                           0
+Bacteria:Candidatus Campbellbacteria                        0
+Bacteria:Candidatus Chisholmbacteria                        0
+Bacteria:Candidatus Cloacimonetes                           0
+Bacteria:Candidatus Coatesbacteria                          0
+Bacteria:Candidatus Collierbacteria                         0
+Bacteria:Candidatus Colwellbacteria                         0
+Bacteria:Candidatus Curtissbacteria                         0
+Bacteria:Candidatus Dadabacteria                            0
+Bacteria:Candidatus Daviesbacteria                          0
+Bacteria:Candidatus Delongbacteria                          0
+Bacteria:Candidatus Doudnabacteria                          0
+Bacteria:Candidatus Edwardsbacteria                         0
+Bacteria:Candidatus Eisenbacteria                           0
+Bacteria:Candidatus Falkowbacteria                          0
+Bacteria:Candidatus Fermentibacteria                        0
+Bacteria:Candidatus Fervidibacteria                         0
+Bacteria:Candidatus Firestonebacteria                       0
+Bacteria:Candidatus Fischerbacteria                         0
+Bacteria:Candidatus Fraserbacteria                          0
+Bacteria:Candidatus Giovannonibacteria                      0
+Bacteria:Candidatus Glassbacteria                           0
+Bacteria:Candidatus Gottesmanbacteria                       0
+Bacteria:Candidatus Gracilibacteria                         0
+Bacteria:Candidatus Handelsmanbacteria                      0
+Bacteria:Candidatus Harrisonbacteria                        0
+Bacteria:Candidatus Hydrogenedentes                         0
+Bacteria:Candidatus Jacksonbacteria                         0
+Bacteria:Candidatus Jorgensenbacteria                       0
+Bacteria:Candidatus Kaiserbacteria                          0
+Bacteria:Candidatus Kerfeldbacteria                         0
+Bacteria:Candidatus Komeilibacteria                         0
+Bacteria:Candidatus Kryptonia                               0
+Bacteria:Candidatus Kuenenbacteria                          0
+Bacteria:Candidatus Latescibacteria                         0
+Bacteria:Candidatus Levybacteria                            0
+Bacteria:Candidatus Lindowbacteria                          0
+Bacteria:Candidatus Liptonbacteria                          0
+Bacteria:Candidatus Lloydbacteria                           0
+Bacteria:Candidatus Magasanikbacteria                       0
+Bacteria:Candidatus Margulisbacteria                        0
+Bacteria:Candidatus Marinimicrobia                          0
+Bacteria:Candidatus Melainabacteria                         29
+Bacteria:Candidatus Microgenomates                          0
+Bacteria:Candidatus Moranbacteria                           0
+Bacteria:Candidatus Nealsonbacteria                         0
+Bacteria:Candidatus Niyogibacteria                          0
+Bacteria:Candidatus Nomurabacteria                          0
+Bacteria:Candidatus Omnitrophica                            0
+Bacteria:Candidatus Pacebacteria                            0
+Bacteria:Candidatus Parcubacteria                           0
+Bacteria:Candidatus Peregrinibacteria                       0
+Bacteria:Candidatus Poribacteria                            0
+Bacteria:Candidatus Portnoybacteria                         0
+Bacteria:Candidatus Raymondbacteria                         0
+Bacteria:Candidatus Riflebacteria                           0
+Bacteria:Candidatus Roizmanbacteria                         0
+Bacteria:Candidatus Rokubacteria                            0
+Bacteria:Candidatus Ryanbacteria                            0
+Bacteria:Candidatus Saccharibacteria                        871
+Bacteria:Candidatus Schekmanbacteria                        0
+Bacteria:Candidatus Shapirobacteria                         0
+Bacteria:Candidatus Spechtbacteria                          0
+Bacteria:Candidatus Staskawiczbacteria                      0
+Bacteria:Candidatus Sungbacteria                            0
+Bacteria:Candidatus Tagabacteria                            0
+Bacteria:Candidatus Taylorbacteria                          0
+Bacteria:Candidatus Tectomicrobia                           0
+Bacteria:Candidatus Terrybacteria                           0
+Bacteria:Candidatus Uhrbacteria                             0
+Bacteria:Candidatus Veblenbacteria                          0
+Bacteria:Candidatus Vogelbacteria                           0
+Bacteria:Candidatus Wallbacteria                            0
+Bacteria:Candidatus Wildermuthbacteria                      0
+Bacteria:Candidatus Woesebacteria                           0
+Bacteria:Candidatus Wolfebacteria                           0
+Bacteria:Candidatus Woykebacteria                           0
+Bacteria:Candidatus Yanofskybacteria                        0
+Bacteria:Candidatus Yonathbacteria                          0
+Bacteria:Candidatus Zambryskibacteria                       0
+Bacteria:Chlamydiae                                         239
+Bacteria:Chlorobi                                           252
+Bacteria:Chloroflexi                                        4868
+Bacteria:Chrysiogenetes                                     33
+Bacteria:Cloacimonetes                                      29
+Bacteria:Coprothermobacterota                               15
+Bacteria:Cyanobacteria                                      3742
+Bacteria:Deferribacteres                                    67
+Bacteria:Deinococcus-Thermus                                917
+Bacteria:Dictyoglomi                                        36
+Bacteria:EM3                                                0
+Bacteria:Elusimicrobia                                      65
+Bacteria:Fervidibacteria                                    57
+Bacteria:Fibrobacteres                                      70
+Bacteria:Firmicutes                                         9291
+Bacteria:Fusobacteria                                       34
+Bacteria:Gemmatimonadetes                                   9803
+Bacteria:Gracilibacteria                                    4
+Bacteria:Hydrogenedentes                                    27
+Bacteria:Ignavibacteriae                                    138
+Bacteria:Kiritimatiellaeota                                 0
+Bacteria:Kryptonia                                          0
+Bacteria:Latescibacteria                                    78
+Bacteria:Lentisphaerae                                      34
+Bacteria:Marinimicrobia                                     50
+Bacteria:Microgenomates                                     79
+Bacteria:Nitrospinae                                        87
+Bacteria:Nitrospirae                                        923
+Bacteria:Omnitrophica                                       106
+Bacteria:PER                                                2
+Bacteria:Parcubacteria                                      422
+Bacteria:Planctomycetes                                     4220
+Bacteria:Poribacteria                                       16
+Bacteria:Proteobacteria                                     162016
+Bacteria:Spirochaetes                                       354
+Bacteria:Synergistetes                                      160
+Bacteria:Tectomicrobia                                      0
+Bacteria:Tenericutes                                        16
+Bacteria:Thermodesulfobacteria                              106
+Bacteria:Thermotogae                                        106
+Bacteria:Verrucomicrobia                                    12014
+Bacteria:WS1                                                17
+Bacteria:Zixibacteria                                       0
+Bacteria:candidate division CPR1                            0
+Bacteria:candidate division CPR2                            0
+Bacteria:candidate division CPR3                            0
+Bacteria:candidate division GAL15                           0
+Bacteria:candidate division JL-ETNP-Z39                     0
+Bacteria:candidate division JS1                             0
+Bacteria:candidate division KD3-62                          0
+Bacteria:candidate division KSB3                            0
+Bacteria:candidate division NC10                            0
+Bacteria:candidate division SR1                             0
+Bacteria:candidate division TM6                             0
+Bacteria:candidate division WOR-3                           0
+Bacteria:candidate division WPS-1                           0
+Bacteria:candidate division WPS-2                           0
+Bacteria:candidate division WWE3                            0
+Bacteria:candidate division ZB3                             0
+Bacteria:candidate division Zixibacteria                    0
+Bacteria:unclassified                                       16695
+Eukaryota:Annelida                                          9
+Eukaryota:Apicomplexa                                       3
+Eukaryota:Arthropoda                                        23
+Eukaryota:Ascomycota                                        105
+Eukaryota:Bacillariophyta                                   6
+Eukaryota:Basidiomycota                                     27
+Eukaryota:Blastocladiomycota                                2
+Eukaryota:Chlorophyta                                       48
+Eukaryota:Chordata                                          24
+Eukaryota:Chytridiomycota                                   13
+Eukaryota:Cnidaria                                          8
+Eukaryota:Microsporidia                                     1
+Eukaryota:Mollusca                                          6
+Eukaryota:Mucoromycota                                      0
+Eukaryota:Nematoda                                          3
+Eukaryota:Phaeophyceae                                      6
+Eukaryota:Placozoa                                          3
+Eukaryota:Porifera                                          21
+Eukaryota:Streptophyta                                      82
+Eukaryota:Zoopagomycota                                     0
+Eukaryota:unclassified                                      69
+GFragment:Archaea:unclassified                              0
+GFragment:Bacteria:Actinobacteria                           0
+GFragment:Bacteria:Bacteroidetes                            0
+GFragment:Bacteria:Cyanobacteria                            0
+GFragment:Bacteria:Firmicutes                               0
+GFragment:Bacteria:Proteobacteria                           0
+GFragment:Bacteria:unclassified                             0
+GFragment:Eukaryota:Ascomycota                              0
+GFragment:Eukaryota:Fungi                                   0
+GFragment:Eukaryota:unclassified                            0
+GFragment:Plasmid:other sequences:Proteobacteria            0
+GFragment:Plasmid:other sequences:unclassified              0
+Microbiome:unclassified                                     0
+Plasmid:Archaea:Crenarchaeota                               0
+Plasmid:Archaea:Euryarchaeota                               0
+Plasmid:Archaea:unclassified                                0
+Plasmid:Bacteria:Actinobacteria                             0
+Plasmid:Bacteria:Bacteroidetes                              0
+Plasmid:Bacteria:Chlamydiae                                 0
+Plasmid:Bacteria:Chlorobi                                   0
+Plasmid:Bacteria:Cyanobacteria                              0
+Plasmid:Bacteria:Firmicutes                                 0
+Plasmid:Bacteria:Fusobacteria                               0
+Plasmid:Bacteria:Nitrospirae                                0
+Plasmid:Bacteria:Proteobacteria                             0
+Plasmid:Bacteria:Spirochaetes                               0
+Plasmid:Bacteria:Tenericutes                                0
+Plasmid:Bacteria:Thermi                                     0
+Plasmid:Bacteria:Thermotogae                                0
+Plasmid:Bacteria:unclassified                               0
+Plasmid:Eukaryota:Ascomycota                                0
+Plasmid:Eukaryota:Basidiomycota                             0
+Plasmid:Eukaryota:Rhodophyta                                0
+Plasmid:Eukaryota:Streptophyta                              0
+Plasmid:Eukaryota:unclassified                              0
+Plasmid:Eukaryota:unclassified eukaryotes                   0
+Plasmid:other sequences:Proteobacteria                      0
+Plasmid:other sequences:plasmids                            0
+Plasmid:other sequences:unclassified                        0
+Viruses:RNA viruses                                         0
+Viruses:Retro-transcribing viruses                          0
+Viruses:Satellites                                          0
+Viruses:dsDNA viruses                                       0
+Viruses:dsDNA viruses, no RNA stage                         99
+Viruses:dsRNA                                               0
+Viruses:dsRNA viruses                                       0
+Viruses:ssDNA viruses                                       0
+Viruses:ssRNA (+) viruses                                   0
+Viruses:ssRNA (-) viruses                                   0
+Viruses:ssRNA negative-strand viruses                       0
+Viruses:ssRNA positive-strand viruses, no DNA stage         0
+Viruses:ssRNA viruses                                       0
+Viruses:unassigned viruses                                  0
+Viruses:unclassified                                        15
+Viruses:unclassified archaeal viruses                       0
+Viruses:unclassified phages                                 3
+Viruses:unclassified virophages                             0
+Viruses:unclassified viruses                                1

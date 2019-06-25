@@ -4,6 +4,7 @@ import AsyncComputed from "vue-async-computed";
 import vMousetrap from "vue-utilities/v-mousetrap";
 import snackbarService from "vue-utilities/snackbar-service";
 import promptService from "vue-utilities/prompt-service";
+import vueNumeralFilterInstaller from "vue-numeral-filter";
 import Girder, { RestClient } from "@girder/components/src";
 import ResonantGeo from "resonantgeo";
 
@@ -21,6 +22,7 @@ Vue.use(Girder);
 Vue.use(snackbarService);
 Vue.use(promptService);
 Vue.use(vMousetrap);
+Vue.use(vueNumeralFilterInstaller);
 
 girder.rest = new RestClient({ apiRoot: API_URL });
 
