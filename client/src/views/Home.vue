@@ -66,24 +66,40 @@ export default {
         return {
           table7: Object.values(dataset.table7),
           table8: Object.values(dataset.table8),
-          table9: Object.values(dataset.table9)
+          table9: Object.values(dataset.table9),
+          summary: dataset.summary
         };
       } else {
-        return ["table7", "table8", "table9"].reduce((tables, tableName) => {
+        var tables = {};
+        var selectedProjectIds = this.selectedSamples.map(
+          project => project["taxon_oid"]
+        );
+        ["table7", "table8", "table9"].forEach(tableName => {
           tables[tableName] = Object.entries(dataset[tableName])
-            .filter(
-              ([sampleId]) =>
-                this.selectedSamples
-                  .map(project => project["taxon_oid"])
-                  .indexOf(sampleId) !== -1
-            )
+            .filter(([sampleId]) => selectedProjectIds.indexOf(sampleId) !== -1)
             .map(([, values]) => values);
-          return tables;
-        }, {});
+        });
+        tables["summary"] = dataset.summary.filter(
+          summary => selectedProjectIds.indexOf(summary.taxon_oid) !== -1
+        );
+        return tables;
       }
     },
-    MetagenomeProperties() {
+    metagenomeProperties() {
       return ["GBp", "Number of features identified", "CDS", "rRNA"];
+    },
+    gcNumbers() {
+      if (this.filteredTablesValues.summary.length === 1) {
+        return this.filteredTablesValues.summary[0].GC;
+      } else {
+        var gcNumbers = this.filteredTablesValues.summary.map(summary =>
+          parseFloat(summary.GC)
+        );
+        var min = Math.min(...gcNumbers);
+        var max = Math.max(...gcNumbers);
+        var mean = _.mean(gcNumbers);
+        return { min, max, mean };
+      }
     }
   },
   methods: {
@@ -189,13 +205,24 @@ export default {
                   </h5>
                   <v-list dense>
                     <v-list-tile
-                      v-for="property of MetagenomeProperties"
+                      v-for="property of metagenomeProperties"
                       :key="property"
                     >
                       <v-list-tile-content>{{ property }}</v-list-tile-content>
                       <v-list-tile-content class="align-end">{{
                         table7Sum(property) | numeral("0,0.[000]")
                       }}</v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                      <v-list-tile-content>GC</v-list-tile-content>
+                      <v-list-tile-content class="align-end">
+                        <template v-if="typeof gcNumbers === 'string'">
+                          {{gcNumbers| numeral('0.[00]') }}%
+                        </template>
+                        <template v-else>
+                          {{gcNumbers.min | numeral('0.[00]') }}% ~ {{gcNumbers.max | numeral('0.[00]') }}% ({{gcNumbers.mean | numeral('0.[00]') }}%)
+                        </template>
+                      </v-list-tile-content>
                     </v-list-tile>
                   </v-list>
                 </v-card-text>
