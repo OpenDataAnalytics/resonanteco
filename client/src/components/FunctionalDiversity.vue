@@ -37,22 +37,15 @@ export default {
 </script>
 
 <template>
-  <v-card class="fill-height bordered sample">
-    <v-card-title>
-      <h4>Functional Diversity</h4>
-    </v-card-title>
-    <v-card-text>
-      <GChart
-        style="height: 100%;"
-        type="BarChart"
-        :data="chartData"
-        :options="{
-          chartArea: { width: '70%', height: '85%', right: 0 },
-          legend: 'none'
-        }"
-      />
-    </v-card-text>
-  </v-card>
+  <GChart
+    style="height: 100%;"
+    type="BarChart"
+    :data="chartData"
+    :options="{
+      chartArea: { width: '70%', height: '85%', right: 0 },
+      legend: 'none'
+    }"
+  />
 </template>
 
 <style lang="scss" scoped>

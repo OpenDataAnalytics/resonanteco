@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <v-toolbar app clipped-left>
+  <v-toolbar app clipped-left dense>
     <v-toolbar-title>
       <v-tooltip open-delay="2000" bottom>
         <template #activator="{ on }">
@@ -29,15 +29,9 @@ export default {
         <span>v{{ version }}</span>
       </v-tooltip>
     </v-toolbar-title>
-    <v-tabs
-      class="navigation-tabs ml-3"
-      icons-and-text
-      :height="64"
-      color="transparent"
-    >
+    <v-tabs class="navigation-tabs ml-3" color="transparent">
       <v-tab to="/">
         Explore
-        <v-icon>explore</v-icon>
       </v-tab>
     </v-tabs>
     <v-spacer></v-spacer>

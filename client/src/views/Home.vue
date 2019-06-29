@@ -128,8 +128,8 @@ export default {
               <SamplesLocation />
             </v-flex>
             <v-flex>
-              <v-card class="fill-height bordered sample">
-                <v-responsive :aspect-ratio="1">
+              <v-card class="fill-height" color="teal darken-1" dark>
+                <v-responsive :aspect-ratio="4 / 3">
                   <v-card-title>
                     <h4>Sample types</h4>
                   </v-card-title>
@@ -140,7 +140,7 @@ export default {
               </v-card>
             </v-flex>
             <v-flex>
-              <v-card class="fill-height bordered ecosystem">
+              <v-card class="fill-height" color="blue-grey darken-1" dark>
                 <v-card-title>
                   <h4>Ecosystems</h4>
                 </v-card-title>
@@ -151,7 +151,7 @@ export default {
             </v-flex>
             <!-- 4 -->
             <v-flex>
-              <v-card class="fill-height bordered metagenome">
+              <v-card class="fill-height" color="indigo darken-1" dark>
                 <v-card-title>
                   <h4># metagenome</h4>
                 </v-card-title>
@@ -160,7 +160,7 @@ export default {
             </v-flex>
             <!-- 5 -->
             <v-flex>
-              <v-card class="fill-height bordered metatranscriptome">
+              <v-card class="fill-height" color="orange darken-2" dark>
                 <v-card-title>
                   <h4># Metatranscriptomes</h4>
                 </v-card-title>
@@ -174,24 +174,24 @@ export default {
       </v-flex>
       <v-subheader class="mt-4">
         <template v-if="!selectedSamples.length">
-          All projects and samples
+          Across all projects and samples
         </template>
         <template v-else-if="selectedSamples.length === 1">
           {{ selectedSamples[0]["Genome Name / Sample Name"] }}
         </template>
         <template v-else>
-          Multiple
+          Multiple items
         </template>
       </v-subheader>
       <v-flex class="mb-5">
         <v-container class="py-0" fluid grid-list-lg fill-height>
           <v-layout class="tile-row">
             <v-flex>
-              <v-card class="fill-height bordered metagenome">
-                <v-card-title>
+              <v-card class="fill-height my-flex">
+                <v-card-title class="indigo darken-1 my-dark">
                   <h4>Metagenome properties</h4>
                 </v-card-title>
-                <v-card-text>
+                <v-card-text class="white-card-text theme--light">
                   <h5>
                     <template v-if="!selectedSamples.length">
                       Total
@@ -203,7 +203,7 @@ export default {
                       Sum
                     </template>
                   </h5>
-                  <v-list dense>
+                  <v-list dense light>
                     <v-list-tile
                       v-for="property of metagenomeProperties"
                       :key="property"
@@ -217,10 +217,13 @@ export default {
                       <v-list-tile-content>GC</v-list-tile-content>
                       <v-list-tile-content class="align-end">
                         <template v-if="typeof gcNumbers === 'string'">
-                          {{gcNumbers| numeral('0.[00]') }}%
+                          {{ gcNumbers | numeral("0.[00]") }}%
                         </template>
                         <template v-else>
-                          {{gcNumbers.min | numeral('0.[00]') }}% ~ {{gcNumbers.max | numeral('0.[00]') }}% ({{gcNumbers.mean | numeral('0.[00]') }}%)
+                          {{ gcNumbers.min | numeral("0.[00]") }}% ~
+                          {{ gcNumbers.max | numeral("0.[00]") }}% ({{
+                            gcNumbers.mean | numeral("0.[00]")
+                          }}%)
                         </template>
                       </v-list-tile-content>
                     </v-list-tile>
@@ -231,32 +234,44 @@ export default {
             <v-flex>
               <v-card
                 v-if="selectedSamples.length === 0"
-                class="fill-height bordered metatranscriptome"
+                class="fill-height my-flex"
               >
-                <v-card-title>
+                <v-card-title class="orange darken-2 my-dark">
                   <h4>Metatranscriptome properties</h4>
                 </v-card-title>
                 <v-card-text> </v-card-text>
               </v-card>
-              <PhylogeneticDistribution
-                v-else
-                :filteredTable8Values="filteredTablesValues.table8"
-              />
+              <v-card v-else class="fill-height my-flex">
+                <v-card-title class="cyan darken-1 my-dark">
+                  <h4>Phylogenetic Distribution</h4>
+                </v-card-title>
+                <v-card-text class="white-card-text">
+                  <PhylogeneticDistribution
+                    :filteredTablesValues="filteredTablesValues"
+                /></v-card-text>
+              </v-card>
             </v-flex>
             <v-flex>
               <v-card
                 v-if="selectedSamples.length === 0"
-                class="fill-height bordered sample"
+                class="fill-height my-flex"
               >
-                <v-card-title>
+                <v-card-title class="teal darken-1 my-dark">
                   <h4>Sample characteristics</h4>
                 </v-card-title>
                 <v-card-text> </v-card-text>
               </v-card>
-              <FunctionalDiversity
-                v-else
-                :filteredTable9Values="filteredTablesValues.table9"
-              />
+              <v-card v-else class="fill-height my-flex">
+                <v-card-title class="blue-grey darken-1 my-dark">
+                  <h4>Functional Diversity</h4>
+                </v-card-title>
+
+                <v-card-text class="white-card-text">
+                  <FunctionalDiversity
+                    :filteredTable9Values="filteredTablesValues.table9"
+                  />
+                </v-card-text>
+              </v-card>
             </v-flex>
           </v-layout>
         </v-container>
@@ -282,24 +297,22 @@ export default {
   }
 }
 
-.v-card.bordered {
-  border-width: 2px;
-  border-style: solid;
+.v-card.my-flex {
+  display: flex;
+  flex-direction: column;
 
-  &.sample {
-    border-color: #7f7f7f;
+  .v-card__title.my-dark {
+    color: white;
   }
 
-  &.ecosystem {
-    border-color: #cb6c2b;
-  }
+  .v-card__text {
+    flex: 1;
 
-  &.metagenome {
-    border-color: #41719c;
-  }
-
-  &.metatranscriptome {
-    border-color: #548235;
+    &.white-card-text {
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
 </style>
