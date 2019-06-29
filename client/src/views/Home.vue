@@ -115,8 +115,7 @@ export default {
 <template>
   <v-content>
     <NavigationBar />
-    <v-navigation-drawer app permanent clipped width="350">
-      <v-subheader>Projects and samples</v-subheader>
+    <v-navigation-drawer app permanent clipped width="310">
       <SampleList :selectedSamples.sync="selectedSamples" />
     </v-navigation-drawer>
     <v-layout fill-height column>
@@ -129,7 +128,7 @@ export default {
             </v-flex>
             <v-flex>
               <v-card class="fill-height" color="teal darken-1" dark>
-                <v-responsive :aspect-ratio="4 / 3">
+                <v-responsive :aspect-ratio="16 / 10">
                   <v-card-title>
                     <h4>Sample types</h4>
                   </v-card-title>
@@ -284,12 +283,8 @@ export default {
 .v-navigation-drawer {
   display: flex;
   flex-direction: column;
-
-  .v-list {
-    flex: 1;
-    overflow-y: auto;
-  }
 }
+
 .tile-row {
   .flex {
     flex-basis: 0;

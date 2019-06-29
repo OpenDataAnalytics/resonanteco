@@ -5,6 +5,7 @@ import vMousetrap from "vue-utilities/v-mousetrap";
 import snackbarService from "vue-utilities/snackbar-service";
 import promptService from "vue-utilities/prompt-service";
 import vueNumeralFilterInstaller from "vue-numeral-filter";
+import vueNiceScrollbar from "vue-nice-scrollbar";
 import Girder, { RestClient } from "@girder/components/src";
 import ResonantGeo from "resonantgeo";
 
@@ -23,6 +24,7 @@ Vue.use(snackbarService);
 Vue.use(promptService);
 Vue.use(vMousetrap);
 Vue.use(vueNumeralFilterInstaller);
+Vue.use(vueNiceScrollbar);
 
 girder.rest = new RestClient({ apiRoot: API_URL });
 
