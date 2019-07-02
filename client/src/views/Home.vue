@@ -7,6 +7,7 @@ import SamplesLocation from "@/components/SamplesLocation";
 import PhylogeneticDistribution from "@/components/PhylogeneticDistribution";
 import FunctionalDiversity from "@/components/FunctionalDiversity";
 import MetagenomePropertiesTable from "@/components/MetagenomePropertiesTable";
+import Sunburst from "@/components/Sunburst";
 import { dataset } from "../util/dataLoader";
 console.log(dataset);
 
@@ -18,7 +19,8 @@ export default {
     SamplesLocation,
     PhylogeneticDistribution,
     FunctionalDiversity,
-    MetagenomePropertiesTable
+    MetagenomePropertiesTable,
+    Sunburst
   },
   data() {
     return {
@@ -219,6 +221,18 @@ export default {
                 /></v-card-text>
               </v-card>
             </v-flex>
+
+            <v-flex>
+              <v-card class="fill-height my-flex">
+                <v-card-title class="cyan darken-1 my-dark">
+                  <h4>Sunburst</h4>
+                </v-card-title>
+                <v-card-text class="white-card-text">
+                  <Sunburst :filteredTablesValues="filteredTablesValues" />
+                </v-card-text>
+              </v-card>
+            </v-flex>
+
             <v-flex>
               <v-card
                 v-if="selectedSamples.length === 0"
