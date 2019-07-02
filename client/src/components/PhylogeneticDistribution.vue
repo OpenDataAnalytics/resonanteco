@@ -1,6 +1,5 @@
 <script>
 import d3 from "d3";
-import { schemeCategory10 } from "d3-scale-chromatic";
 import { GChart } from "vue-google-charts";
 
 export default {
@@ -12,6 +11,9 @@ export default {
     filteredTablesValues: {
       type: Object,
       required: true
+    },
+    cmap: {
+      required: true
     }
   },
   data() {
@@ -20,7 +22,6 @@ export default {
     };
   },
   computed: {
-    schemeCategory10: () => schemeCategory10,
     alphaDiversivty() {
       return this.filteredTablesValues.table7.reduce(
         (total, values) => values["Alpha Diversity"] + total,
@@ -84,6 +85,19 @@ export default {
           .sort((a, b) => b[1] - a[1])
           .slice(0, 12)
       ];
+    },
+    sortedTopSelectedDomainChartColors() {
+      return this.sortedTopSelectedDomainChartData
+        .slice(1)
+        .map(d => d[0])
+        .map(this.cmap);
+    },
+    gChartOptions() {
+      return {
+        chartArea: { width: "95%", height: "95%" },
+        legend: { alignment: "center" },
+        colors: this.sortedTopSelectedDomainChartColors
+      };
     }
   },
   methods: {
@@ -100,7 +114,7 @@ export default {
     <div class="domain-diversity-container">
       <v-tooltip
         top
-        v-for="({ category, count, scaledCount }, i) in domain"
+        v-for="{ category, count, scaledCount } in domain"
         :key="category"
       >
         <template #activator="data">
@@ -109,7 +123,7 @@ export default {
             :class="{ selected: selectedDomain === category }"
             :style="{
               'flex-grow': scaledCount,
-              'background-color': schemeCategory10[i]
+              'background-color': cmap(category)
             }"
             @mouseenter="selectDomain(category)"
           ></div>
@@ -127,10 +141,7 @@ export default {
           style="height: 100%;"
           type="PieChart"
           :data="sortedTopSelectedDomainChartData"
-          :options="{
-            chartArea: { width: '95%', height: '95%' },
-            legend: { alignment: 'center' }
-          }"
+          :options="gChartOptions"
         />
       </div>
     </div>

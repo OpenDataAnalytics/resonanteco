@@ -1,6 +1,6 @@
 <script>
-import { schemePaired } from "d3-scale-chromatic";
-import { scaleOrdinal } from "d3-scale";
+// import { schemePaired } from "d3-scale-chromatic";
+// import { scaleOrdinal } from "d3-scale";
 import Sunburst from "sunburst-chart";
 
 function treeifyTable8(tab) {
@@ -60,6 +60,9 @@ export default {
     filteredTablesValues: {
       type: Object,
       required: true
+    },
+    cmap: {
+      required: true
     }
   },
   computed: {
@@ -105,13 +108,11 @@ export default {
     }
   },
   mounted() {
-    const cmap = scaleOrdinal(schemePaired);
-
     this.chart = Sunburst()
       .width(400)
       .height(400)
       .tooltipContent(d => `value: ${d.value}`)
-      .color((d, parent) => cmap(parent ? parent.data.name : null))
+      .color(d => this.cmap(d.name))
       .data({
         name: "all",
         children: []

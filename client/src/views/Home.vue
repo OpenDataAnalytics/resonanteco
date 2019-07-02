@@ -1,5 +1,7 @@
 <script>
 import _ from "lodash";
+import { scaleOrdinal } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 
 import NavigationBar from "@/components/NavigationBar";
 import SampleList from "@/components/SampleList";
@@ -24,7 +26,8 @@ export default {
   },
   data() {
     return {
-      selectedSamples: []
+      selectedSamples: [],
+      cmap: scaleOrdinal(schemeCategory10)
     };
   },
   computed: {
@@ -218,6 +221,7 @@ export default {
                 <v-card-text class="white-card-text px-3 py-2">
                   <PhylogeneticDistribution
                     :filteredTablesValues="filteredTablesValues"
+                    :cmap="cmap"
                 /></v-card-text>
               </v-card>
             </v-flex>
@@ -228,7 +232,10 @@ export default {
                   <h4>Sunburst</h4>
                 </v-card-title>
                 <v-card-text class="white-card-text">
-                  <Sunburst :filteredTablesValues="filteredTablesValues" />
+                  <Sunburst
+                    :filteredTablesValues="filteredTablesValues"
+                    :cmap="cmap"
+                  />
                 </v-card-text>
               </v-card>
             </v-flex>
