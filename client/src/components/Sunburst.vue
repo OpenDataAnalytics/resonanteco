@@ -1,7 +1,5 @@
 <script>
-// import { schemePaired } from "d3-scale-chromatic";
-// import { scaleOrdinal } from "d3-scale";
-import Sunburst from "sunburst-chart";
+import Sunburst from "@arclamp/sunburst-chart";
 
 function treeifyTable8(tab) {
   let tree = {};
@@ -111,7 +109,15 @@ export default {
     this.chart = Sunburst()
       .width(400)
       .height(400)
-      .tooltipContent(d => `value: ${d.value}`)
+      .tooltipShow(d => d.name !== "")
+      .tooltipTitle(d => {
+        const text = this.chart._tooltipTitle(d);
+        return text
+          .split(" > ")
+          .slice(1)
+          .join(" > ");
+      })
+      .tooltipContent(d => (d.value !== undefined ? `value: ${d.value}` : ""))
       .color(d => this.cmap(d.name))
       .data({
         name: "",
