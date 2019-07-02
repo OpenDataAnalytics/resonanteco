@@ -6,6 +6,7 @@ import SampleList from "@/components/SampleList";
 import SamplesLocation from "@/components/SamplesLocation";
 import PhylogeneticDistribution from "@/components/PhylogeneticDistribution";
 import FunctionalDiversity from "@/components/FunctionalDiversity";
+import MetagenomePropertiesTable from "@/components/MetagenomePropertiesTable";
 import { dataset } from "../util/dataLoader";
 console.log(dataset);
 
@@ -16,7 +17,8 @@ export default {
     SampleList,
     SamplesLocation,
     PhylogeneticDistribution,
-    FunctionalDiversity
+    FunctionalDiversity,
+    MetagenomePropertiesTable
   },
   data() {
     return {
@@ -61,6 +63,7 @@ export default {
         meta => meta.Sequencing === "Metatranscriptomes"
       ).length;
     },
+    // deprecating
     filteredTablesValues() {
       if (!this.selectedSamples.length) {
         return {
@@ -80,35 +83,44 @@ export default {
             .map(([, values]) => values);
         });
         tables["summary"] = dataset.summary.filter(
-          summary => selectedProjectIds.indexOf(summary.taxon_oid) !== -1
+          summary => selectedProjectIds.indexOf(summary["taxon_oid"]) !== -1
         );
         return tables;
       }
     },
-    metagenomeProperties() {
-      return ["GBp", "Number of features identified", "CDS", "rRNA"];
-    },
-    gcNumbers() {
-      if (this.filteredTablesValues.summary.length === 1) {
-        return this.filteredTablesValues.summary[0].GC;
+    filteredTables() {
+      if (!this.selectedSamples.length) {
+        return {
+          meta: dataset.meta,
+          summary: dataset.summary,
+          table7: dataset.table7,
+          table8: dataset.table8,
+          table9: dataset.table9
+        };
       } else {
-        var gcNumbers = this.filteredTablesValues.summary.map(summary =>
-          parseFloat(summary.GC)
+        var tables = {};
+        var selectedProjectIds = this.selectedSamples.map(
+          project => project["taxon_oid"]
         );
-        var min = Math.min(...gcNumbers);
-        var max = Math.max(...gcNumbers);
-        var mean = _.mean(gcNumbers);
-        return { min, max, mean };
+        ["table7", "table8", "table9"].forEach(tableName => {
+          tables[tableName] = Object.entries(dataset[tableName])
+            .filter(([sampleId]) => selectedProjectIds.indexOf(sampleId) !== -1)
+            .reduce((obj, [key, values]) => {
+              obj[key] = values;
+              return obj;
+            }, {});
+        });
+        tables["meta"] = dataset.meta.filter(
+          meta => selectedProjectIds.indexOf(meta["taxon_oid"]) !== -1
+        );
+        tables["summary"] = dataset.summary.filter(
+          summary => selectedProjectIds.indexOf(summary.taxon_oid) !== -1
+        );
+        return tables;
       }
     }
   },
-  methods: {
-    table7Sum(property) {
-      return _.sum(
-        this.filteredTablesValues.table7.map(values => values[property])
-      );
-    }
-  }
+  methods: {}
 };
 </script>
 
@@ -121,7 +133,7 @@ export default {
     <v-layout fill-height column>
       <v-flex shrink>
         <v-subheader>Summary</v-subheader>
-        <v-container class="py-0" fluid grid-list-lg>
+        <v-container class="py-0 px-2" fluid grid-list-lg>
           <v-layout class="tile-row">
             <v-flex>
               <SamplesLocation />
@@ -130,10 +142,10 @@ export default {
               <v-card class="fill-height" color="teal darken-1" dark>
                 <v-responsive :aspect-ratio="16 / 10">
                   <v-card-title>
-                    <h4>Sample types</h4>
+                    <h3>Sample types</h3>
                   </v-card-title>
                   <v-card-text>
-                    {{ sampleTypes.join(",") }}
+                    <h4>{{ sampleTypes.join(",") }}</h4>
                   </v-card-text>
                 </v-responsive>
               </v-card>
@@ -141,10 +153,10 @@ export default {
             <v-flex>
               <v-card class="fill-height" color="blue-grey darken-1" dark>
                 <v-card-title>
-                  <h4>Ecosystems</h4>
+                  <h3>Ecosystems</h3>
                 </v-card-title>
                 <v-card-text>
-                  {{ ecosystems.join(",") }}
+                  <h4>{{ ecosystems.join(",") }}</h4>
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -152,26 +164,28 @@ export default {
             <v-flex>
               <v-card class="fill-height" color="indigo darken-1" dark>
                 <v-card-title>
-                  <h4># metagenome</h4>
+                  <h3># metagenome</h3>
                 </v-card-title>
-                <v-card-text>{{ numberOfMetagenomes }} </v-card-text>
+                <v-card-text
+                  ><h4>{{ numberOfMetagenomes }}</h4>
+                </v-card-text>
               </v-card>
             </v-flex>
             <!-- 5 -->
             <v-flex>
               <v-card class="fill-height" color="orange darken-2" dark>
                 <v-card-title>
-                  <h4># Metatranscriptomes</h4>
+                  <h3># Metatranscriptomes</h3>
                 </v-card-title>
                 <v-card-text>
-                  {{ numberOfMetatranscriptomes }}
+                  <h4>{{ numberOfMetatranscriptomes }}</h4>
                 </v-card-text>
               </v-card>
             </v-flex>
           </v-layout>
         </v-container>
       </v-flex>
-      <v-subheader class="mt-4">
+      <v-subheader class="mt-2">
         <template v-if="!selectedSamples.length">
           Across all projects and samples
         </template>
@@ -182,54 +196,9 @@ export default {
           Multiple items
         </template>
       </v-subheader>
-      <v-flex class="mb-5">
-        <v-container class="py-0" fluid grid-list-lg fill-height>
+      <v-flex>
+        <v-container class="py-0 px-2" fluid grid-list-lg fill-height>
           <v-layout class="tile-row">
-            <v-flex>
-              <v-card class="fill-height my-flex">
-                <v-card-title class="indigo darken-1 my-dark">
-                  <h4>Metagenome properties</h4>
-                </v-card-title>
-                <v-card-text class="white-card-text theme--light">
-                  <h5>
-                    <template v-if="!selectedSamples.length">
-                      Total
-                    </template>
-                    <template v-else-if="selectedSamples.length === 1">
-                      Single
-                    </template>
-                    <template v-else>
-                      Sum
-                    </template>
-                  </h5>
-                  <v-list dense light>
-                    <v-list-tile
-                      v-for="property of metagenomeProperties"
-                      :key="property"
-                    >
-                      <v-list-tile-content>{{ property }}</v-list-tile-content>
-                      <v-list-tile-content class="align-end">{{
-                        table7Sum(property) | numeral("0,0.[000]")
-                      }}</v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                      <v-list-tile-content>GC</v-list-tile-content>
-                      <v-list-tile-content class="align-end">
-                        <template v-if="typeof gcNumbers === 'string'">
-                          {{ gcNumbers | numeral("0.[00]") }}%
-                        </template>
-                        <template v-else>
-                          {{ gcNumbers.min | numeral("0.[00]") }}% ~
-                          {{ gcNumbers.max | numeral("0.[00]") }}% ({{
-                            gcNumbers.mean | numeral("0.[00]")
-                          }}%)
-                        </template>
-                      </v-list-tile-content>
-                    </v-list-tile>
-                  </v-list>
-                </v-card-text>
-              </v-card>
-            </v-flex>
             <v-flex>
               <v-card
                 v-if="selectedSamples.length === 0"
@@ -244,7 +213,7 @@ export default {
                 <v-card-title class="cyan darken-1 my-dark">
                   <h4>Phylogenetic Distribution</h4>
                 </v-card-title>
-                <v-card-text class="white-card-text">
+                <v-card-text class="white-card-text px-3 py-2">
                   <PhylogeneticDistribution
                     :filteredTablesValues="filteredTablesValues"
                 /></v-card-text>
@@ -265,7 +234,7 @@ export default {
                   <h4>Functional Diversity</h4>
                 </v-card-title>
 
-                <v-card-text class="white-card-text">
+                <v-card-text class="white-card-text pa-3">
                   <FunctionalDiversity
                     :filteredTable9Values="filteredTablesValues.table9"
                   />
@@ -273,6 +242,14 @@ export default {
               </v-card>
             </v-flex>
           </v-layout>
+        </v-container>
+      </v-flex>
+      <v-subheader>
+        Metagenome properties
+      </v-subheader>
+      <v-flex shrink>
+        <v-container class="py-0 px-2" fluid grid-list-lg>
+          <MetagenomePropertiesTable :filteredTables="filteredTables" />
         </v-container>
       </v-flex>
     </v-layout>

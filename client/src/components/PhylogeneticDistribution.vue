@@ -117,20 +117,22 @@ export default {
         <span>{{ category }}: {{ count | separator }}</span>
       </v-tooltip>
     </div>
-    <h5 style="margin-top:5px;">
-      Alpha diversity
-      <div style="font-weight:normal;">{{ alphaDiversivty }}</div>
-    </h5>
-    <div class="gchart-container">
-      <GChart
-        style="height: 100%;"
-        type="PieChart"
-        :data="sortedTopSelectedDomainChartData"
-        :options="{
-          chartArea: { width: '95%', height: '95%' },
-          legend: { alignment: 'center' }
-        }"
-      />
+    <div class="bottom">
+      <h5 class="alpha-diversity-container">
+        Alpha diversity
+        <div style="font-weight:normal;">{{ alphaDiversivty }}</div>
+      </h5>
+      <div class="gchart-container">
+        <GChart
+          style="height: 100%;"
+          type="PieChart"
+          :data="sortedTopSelectedDomainChartData"
+          :options="{
+            chartArea: { width: '95%', height: '95%' },
+            legend: { alignment: 'center' }
+          }"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -150,9 +152,20 @@ export default {
     }
   }
 
-  .gchart-container {
-    flex-grow: 1;
-    padding: 10px;
+  .bottom {
+    flex: 1;
+    display: flex;
+
+    .alpha-diversity-container {
+      position: absolute;
+      margin-top: 5px;
+      z-index: 1;
+    }
+
+    .gchart-container {
+      flex-grow: 1;
+      padding: 10px;
+    }
   }
 }
 </style>
