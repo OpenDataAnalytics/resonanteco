@@ -76,7 +76,7 @@ export default {
       const data = this.treeDataSum;
 
       return {
-        name: "all",
+        name: "",
         children: Object.keys(data).map(kingdom => ({
           name: kingdom,
           children: Object.keys(data[kingdom]).map(species => ({
@@ -114,7 +114,7 @@ export default {
       .tooltipContent(d => `value: ${d.value}`)
       .color(d => this.cmap(d.name))
       .data({
-        name: "all",
+        name: "",
         children: []
       });
 

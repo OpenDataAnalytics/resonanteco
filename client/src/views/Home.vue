@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       selectedSamples: [],
-      cmap: scaleOrdinal(schemeCategory10)
+      sc10: scaleOrdinal(schemeCategory10)
     };
   },
   computed: {
@@ -123,6 +123,15 @@ export default {
         );
         return tables;
       }
+    },
+    cmap() {
+      return v => {
+        if (v === "") {
+          return "#ffffff";
+        }
+
+        return this.sc10(v);
+      };
     }
   },
   methods: {}
