@@ -50,15 +50,7 @@ export default {
       )}%) ${numeral(mean).format("0.[00]")}%`;
     },
     items() {
-      var aggregated = {
-        name: "Aggregated"
-      };
-      for (let property of metagenomeSumProperties) {
-        aggregated[property] = this.table7Sum(property);
-      }
-      aggregated["GC"] = this.gcAggregated;
-
-      var otherRows = Object.entries(this.filteredTables.table7).map(
+      var rows = Object.entries(this.filteredTables.table7).map(
         ([key, values]) => {
           var name = this.getPorjectName(
             this.filteredTables.meta.find(meta => meta["taxon_oid"] === key)
@@ -74,7 +66,19 @@ export default {
           return item;
         }
       );
-      return [aggregated, ...otherRows];
+      if (this.filteredTables.meta.length > 1) {
+        var aggregated = {
+          name: "Aggregated"
+        };
+        for (let property of metagenomeSumProperties) {
+          aggregated[property] = numeral(this.table7Sum(property)).format(
+            "0,0.[000]"
+          );
+        }
+        aggregated["GC"] = this.gcAggregated;
+        rows.unshift(aggregated);
+      }
+      return rows;
     }
   },
   methods: {
