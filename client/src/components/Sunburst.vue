@@ -1,5 +1,6 @@
 <script>
 import Sunburst from "@arclamp/sunburst-chart";
+import debounce from "lodash.debounce";
 
 function treeifyTable8(tab) {
   let tree = {};
@@ -102,7 +103,7 @@ export default {
   },
   watch: {
     sunburstData(data) {
-      this.update(data);
+      this.debouncedUpdate(data);
     }
   },
   mounted() {
@@ -124,6 +125,8 @@ export default {
           name: "",
           children: []
         });
+
+      this.debouncedUpdate = _.debounce(this.update.bind(this), 500);
 
       this.chart(this.$el);
     });
