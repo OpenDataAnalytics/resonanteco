@@ -106,27 +106,27 @@ export default {
     }
   },
   mounted() {
-    this.chart = Sunburst()
-      .width(400)
-      .height(400)
-      .tooltipShow(d => d.name !== "")
-      .tooltipTitle(d => {
-        const text = this.chart._tooltipTitle(d);
-        return text
-          .split(" > ")
-          .slice(1)
-          .join(" > ");
-      })
-      .tooltipContent(d => (d.value !== undefined ? `value: ${d.value}` : ""))
-      .color(d => this.cmap(d.name))
-      .data({
-        name: "",
-        children: []
-      });
+    this.$nextTick(() => {
+      this.chart = Sunburst()
+        .width(this.$el.offsetWidth)
+        .height(this.$el.offsetHeight)
+        .tooltipShow(d => d.name !== "")
+        .tooltipTitle(d => {
+          const text = this.chart._tooltipTitle(d);
+          return text
+            .split(" > ")
+            .slice(1)
+            .join(" > ");
+        })
+        .tooltipContent(d => (d.value !== undefined ? `value: ${d.value}` : ""))
+        .color(d => this.cmap(d.name))
+        .data({
+          name: "",
+          children: []
+        });
 
-    this.chart(this.$refs.container);
-
-    this.update(this.sunburstData);
+      this.chart(this.$el);
+    });
   },
   methods: {
     update(data) {
@@ -137,10 +137,14 @@ export default {
 </script>
 
 <template>
-  <div ref="container" />
+  <div class="eco-sunburst" />
 </template>
 
 <style>
+.eco-sunburst {
+  flex: 1;
+}
+
 textPath.text-contour {
   stroke: none !important;
 }
