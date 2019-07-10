@@ -139,3 +139,13 @@ export default {
 <template>
   <div ref="container" />
 </template>
+
+<style>
+textPath.text-contour {
+  stroke: none !important;
+}
+
+textPath.text-stroke {
+  fill: white !important;
+}
+</style>
