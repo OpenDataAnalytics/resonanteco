@@ -1,7 +1,6 @@
 <script>
 import _ from "lodash";
-import { scaleOrdinal } from "d3-scale";
-import { schemeCategory10 } from "d3-scale-chromatic";
+import d3 from 'd3';
 
 import NavigationBar from "@/components/NavigationBar";
 import SampleList from "@/components/SampleList";
@@ -11,7 +10,6 @@ import FunctionalDiversity from "@/components/FunctionalDiversity";
 import MetagenomePropertiesTable from "@/components/MetagenomePropertiesTable";
 import Sunburst from "@/components/Sunburst";
 import { dataset } from "../util/dataLoader";
-console.log(dataset);
 
 export default {
   name: "Home",
@@ -27,7 +25,7 @@ export default {
   data() {
     return {
       selectedSamples: [],
-      sc10: scaleOrdinal(schemeCategory10)
+      sc10: d3.scale.category10()
     };
   },
   computed: {
@@ -129,7 +127,6 @@ export default {
         if (v === "") {
           return "#ffffff";
         }
-
         return this.sc10(v);
       };
     }
@@ -218,13 +215,15 @@ export default {
                 v-if="selectedSamples.length === 0"
                 class="fill-height my-flex"
               >
-                <v-card-title class="orange darken-2 my-dark">
+                <v-card-title class="color-labeled grey lighten-3">
+                  <div class="color-label orange darken-2"></div>
                   <h4>Metatranscriptome properties</h4>
                 </v-card-title>
                 <v-card-text> </v-card-text>
               </v-card>
               <v-card v-else class="fill-height my-flex">
-                <v-card-title class="cyan darken-1 my-dark">
+                <v-card-title class="color-labeled grey lighten-3">
+                  <div class="color-label cyan darken-1"></div>
                   <h4>Phylogenetic Distribution</h4>
                 </v-card-title>
                 <v-card-text class="white-card-text px-3 py-2">
@@ -237,7 +236,8 @@ export default {
 
             <v-flex>
               <v-card class="fill-height my-flex">
-                <v-card-title class="cyan darken-1 my-dark">
+                <v-card-title class="color-labeled grey lighten-3">
+                  <div class="color-label cyan darken-1"></div>
                   <h4>Sunburst</h4>
                 </v-card-title>
                 <v-card-text class="white-card-text">
@@ -254,13 +254,15 @@ export default {
                 v-if="selectedSamples.length === 0"
                 class="fill-height my-flex"
               >
-                <v-card-title class="teal darken-1 my-dark">
+                <v-card-title class="color-labeled grey lighten-3">
+                  <div class="color-label teal darken-1"></div>
                   <h4>Sample characteristics</h4>
                 </v-card-title>
                 <v-card-text> </v-card-text>
               </v-card>
               <v-card v-else class="fill-height my-flex">
-                <v-card-title class="blue-grey darken-1 my-dark">
+                <v-card-title class="color-labeled grey lighten-3">
+                  <div class="color-label teal darken-1"></div>
                   <h4>Functional Diversity</h4>
                 </v-card-title>
 
@@ -303,8 +305,18 @@ export default {
   display: flex;
   flex-direction: column;
 
-  .v-card__title.my-dark {
-    color: white;
+  .v-card__title.color-labeled {
+    position: relative;
+    overflow: hidden;
+    padding: 14px 16px 14px 24px;
+
+    div.color-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 8px;
+    }
   }
 
   .v-card__text {

@@ -1,5 +1,5 @@
 <script>
-import { schemeCategory10 } from "d3-scale-chromatic";
+import d3 from 'd3';
 import { GChart } from "vue-google-charts";
 
 export default {
@@ -24,11 +24,12 @@ export default {
           aggregated[key] += count;
         });
       });
+      var colors = d3.scale.category10().range();
       return [
         ["Function", "Count", { role: "style" }],
         ...Object.entries(aggregated).map((values, i) => [
           ...values,
-          schemeCategory10[i]
+          colors[i]
         ])
       ];
     }
