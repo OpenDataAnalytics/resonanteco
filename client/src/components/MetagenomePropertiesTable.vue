@@ -50,22 +50,22 @@ export default {
       )}%) ${numeral(mean).format("0.[00]")}%`;
     },
     items() {
-      var rows = Object.entries(this.filteredTables.table7).map(
-        ([key, values]) => {
-          var name = this.getPorjectName(
-            this.filteredTables.meta.find(meta => meta["taxon_oid"] === key)
-          );
-          var gc = this.filteredTables.summary.find(
-            summary => summary["taxon_oid"] === key
-          )["GC"];
-          gc = numeral(gc).format("0.[00]") + "%";
-          var item = { name, GC: gc };
-          for (let property of metagenomeSumProperties) {
-            item[property] = numeral(values[property]).format("0,0.[000]");
-          }
-          return item;
+      var rows = this.filteredTables.table7.map(record => {
+        var name = this.getPorjectName(
+          this.filteredTables.meta.find(
+            meta => meta.taxon_oid === record.taxon_oid
+          )
+        );
+        var gc = this.filteredTables.summary.find(
+          summary => summary.taxon_oid === record.taxon_oid
+        )["GC"];
+        gc = numeral(gc).format("0.[00]") + "%";
+        var item = { name, GC: gc };
+        for (let property of metagenomeSumProperties) {
+          item[property] = numeral(record[property]).format("0,0.[000]");
         }
-      );
+        return item;
+      });
       if (this.filteredTables.meta.length > 1) {
         var aggregated = {
           name: "Aggregated"

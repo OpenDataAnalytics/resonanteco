@@ -11,6 +11,9 @@ function treeifyTable8(tab) {
     }
 
     const [kingdom, species] = key.split(":");
+    if (!kingdom || !species) {
+      return;
+    }
     tree[kingdom] = tree[kingdom] || {};
     tree[kingdom][species] = tree[kingdom][species] || 0;
 
@@ -56,7 +59,7 @@ function treeSum(arr) {
 export default {
   name: "Sunburst",
   props: {
-    filteredTablesValues: {
+    filteredTables: {
       type: Object,
       required: true
     },
@@ -66,7 +69,7 @@ export default {
   },
   computed: {
     treeData() {
-      return this.filteredTablesValues.table8.map(treeifyTable8);
+      return this.filteredTables.table8.map(treeifyTable8);
     },
     treeDataSum() {
       return treeSum(this.treeData);
@@ -126,7 +129,7 @@ export default {
           children: []
         });
 
-      this.debouncedUpdate = _.debounce(this.update.bind(this), 500);
+      this.debouncedUpdate = debounce(this.update.bind(this), 500);
 
       this.chart(this.$el);
     });

@@ -1,5 +1,5 @@
 <script>
-import d3 from 'd3';
+import d3 from "d3";
 import { GChart } from "vue-google-charts";
 
 export default {
@@ -8,7 +8,7 @@ export default {
     GChart
   },
   props: {
-    filteredTable9Values: {
+    filteredTable9: {
       type: Array,
       required: true
     }
@@ -16,21 +16,20 @@ export default {
   computed: {
     chartData() {
       var aggregated = {};
-      this.filteredTable9Values.forEach(values => {
-        Object.entries(values).forEach(([key, count]) => {
-          if (!(key in aggregated)) {
-            aggregated[key] = 0;
-          }
-          aggregated[key] += count;
-        });
+      this.filteredTable9.forEach(values => {
+        Object.entries(values)
+          .filter(([key]) => key !== "_id" && key !== "taxon_oid")
+          .forEach(([key, count]) => {
+            if (!(key in aggregated)) {
+              aggregated[key] = 0;
+            }
+            aggregated[key] += count;
+          });
       });
       var colors = d3.scale.category10().range();
       return [
         ["Function", "Count", { role: "style" }],
-        ...Object.entries(aggregated).map((values, i) => [
-          ...values,
-          colors[i]
-        ])
+        ...Object.entries(aggregated).map((values, i) => [...values, colors[i]])
       ];
     }
   }

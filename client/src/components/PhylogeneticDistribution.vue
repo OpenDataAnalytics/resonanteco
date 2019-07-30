@@ -8,7 +8,7 @@ export default {
     GChart
   },
   props: {
-    filteredTablesValues: {
+    filteredTables: {
       type: Object,
       required: true
     },
@@ -23,16 +23,19 @@ export default {
   },
   computed: {
     alphaDiversivty() {
-      return this.filteredTablesValues.table7.reduce(
+      return this.filteredTables.table7.reduce(
         (total, values) => values["Alpha Diversity"] + total,
         0
       );
     },
     domainAndGroup() {
       var grouped = {};
-      this.filteredTablesValues.table8.forEach(table => {
+      this.filteredTables.table8.forEach(table => {
         Object.entries(table).forEach(([key, value]) => {
           var [category, subCategory] = key.split(":").slice(-2);
+          if (!category || !subCategory) {
+            return;
+          }
           if (!(category in grouped)) {
             grouped[category] = {};
           }

@@ -1,8 +1,0 @@
-Functional Diversity
---------------------
-
-CELLULAR PROCESSES AND SIGNALING                            104465
-INFORMATION STORAGE AND PROCESSING                          71785
-METABOLISM                                                  204381
-POORLY CHARACTERIZED                                        78663
-UNCHARACTERIZED                                             132

@@ -22,12 +22,6 @@ module.exports = {
       .end()
       .use()
       .loader("babel-loader");
-
-    config.module
-      .rule("txt")
-      .test(/\.txt$/i)
-      .use()
-      .loader("raw-loader");
   },
   configureWebpack: () => {
     return {

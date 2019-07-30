@@ -1,7 +1,6 @@
 <script>
 import _ from "lodash";
-
-import { dataset } from "@/util/dataLoader";
+import { mapState } from "vuex";
 
 export default {
   name: "SamplesLocation",
@@ -9,15 +8,12 @@ export default {
   async mounted() {
     setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
-      this.$refs.map.toGeoJSON(this.sitesFeature, {
-        animate: 1000,
-        bufferPercentage: 4
-      });
     }, 0);
   },
   computed: {
+    ...mapState(["meta"]),
     sitesFeature() {
-      var grouped = _.groupBy(dataset.meta, sample => {
+      var grouped = _.groupBy(this.meta, sample => {
         return sample.Lat + sample.Long;
       });
       return {
@@ -30,11 +26,19 @@ export default {
               coordinates: [parseFloat(group[0].Long), parseFloat(group[0].Lat)]
             },
             properties: {
-              radius: 5 + 25 * (group.length / dataset.meta.length)
+              radius: 5 + 25 * (group.length / this.meta.length)
             }
           };
         })
       };
+    }
+  },
+  watch: {
+    sitesFeature() {
+      this.$refs.map.toGeoJSON(this.sitesFeature, {
+        animate: 1000,
+        bufferPercentage: 4
+      });
     }
   }
 };

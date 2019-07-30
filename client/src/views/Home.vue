@@ -1,6 +1,7 @@
 <script>
 import _ from "lodash";
-import d3 from 'd3';
+import d3 from "d3";
+import { mapState, mapActions } from "vuex";
 
 import NavigationBar from "@/components/NavigationBar";
 import SampleList from "@/components/SampleList";
@@ -9,7 +10,6 @@ import PhylogeneticDistribution from "@/components/PhylogeneticDistribution";
 import FunctionalDiversity from "@/components/FunctionalDiversity";
 import MetagenomePropertiesTable from "@/components/MetagenomePropertiesTable";
 import Sunburst from "@/components/Sunburst";
-import { dataset } from "../util/dataLoader";
 
 export default {
   name: "Home",
@@ -29,9 +29,9 @@ export default {
     };
   },
   computed: {
-    dataset: () => dataset,
+    ...mapState(["meta", "summary", "table7", "table8", "table9"]),
     metaNames() {
-      return dataset.meta.map(meta => meta["Genome Name / Sample Name"]);
+      return this.meta.map(meta => meta["Genome Name / Sample Name"]);
     },
     sampleTypes() {
       var types = this.metaNames
@@ -58,47 +58,20 @@ export default {
       return _.uniq(types);
     },
     numberOfMetagenomes() {
-      return dataset.meta.filter(meta => meta.Sequencing === "Metagenome")
-        .length;
+      return this.meta.filter(meta => meta.Sequencing === "Metagenome").length;
     },
     numberOfMetatranscriptomes() {
-      return dataset.meta.filter(
-        meta => meta.Sequencing === "Metatranscriptomes"
-      ).length;
-    },
-    // deprecating
-    filteredTablesValues() {
-      if (!this.selectedSamples.length) {
-        return {
-          table7: Object.values(dataset.table7),
-          table8: Object.values(dataset.table8),
-          table9: Object.values(dataset.table9),
-          summary: dataset.summary
-        };
-      } else {
-        var tables = {};
-        var selectedProjectIds = this.selectedSamples.map(
-          project => project["taxon_oid"]
-        );
-        ["table7", "table8", "table9"].forEach(tableName => {
-          tables[tableName] = Object.entries(dataset[tableName])
-            .filter(([sampleId]) => selectedProjectIds.indexOf(sampleId) !== -1)
-            .map(([, values]) => values);
-        });
-        tables["summary"] = dataset.summary.filter(
-          summary => selectedProjectIds.indexOf(summary["taxon_oid"]) !== -1
-        );
-        return tables;
-      }
+      return this.meta.filter(meta => meta.Sequencing === "Metatranscriptomes")
+        .length;
     },
     filteredTables() {
       if (!this.selectedSamples.length) {
         return {
-          meta: dataset.meta,
-          summary: dataset.summary,
-          table7: dataset.table7,
-          table8: dataset.table8,
-          table9: dataset.table9
+          meta: this.meta,
+          summary: this.summary,
+          table7: this.table7,
+          table8: this.table8,
+          table9: this.table9
         };
       } else {
         var tables = {};
@@ -106,17 +79,14 @@ export default {
           project => project["taxon_oid"]
         );
         ["table7", "table8", "table9"].forEach(tableName => {
-          tables[tableName] = Object.entries(dataset[tableName])
-            .filter(([sampleId]) => selectedProjectIds.indexOf(sampleId) !== -1)
-            .reduce((obj, [key, values]) => {
-              obj[key] = values;
-              return obj;
-            }, {});
+          tables[tableName] = this[tableName].filter(
+            record => selectedProjectIds.indexOf(record.taxon_oid) !== -1
+          );
         });
-        tables["meta"] = dataset.meta.filter(
-          meta => selectedProjectIds.indexOf(meta["taxon_oid"]) !== -1
+        tables["meta"] = this.meta.filter(
+          meta => selectedProjectIds.indexOf(meta.taxon_oid) !== -1
         );
-        tables["summary"] = dataset.summary.filter(
+        tables["summary"] = this.summary.filter(
           summary => selectedProjectIds.indexOf(summary.taxon_oid) !== -1
         );
         return tables;
@@ -131,7 +101,12 @@ export default {
       };
     }
   },
-  methods: {}
+  created() {
+    this.load();
+  },
+  methods: {
+    ...mapActions(["load"])
+  }
 };
 </script>
 
@@ -139,7 +114,7 @@ export default {
   <v-content>
     <NavigationBar />
     <v-navigation-drawer app permanent clipped width="310">
-      <SampleList :selectedSamples.sync="selectedSamples" />
+      <SampleList v-if="meta.length" :selectedSamples.sync="selectedSamples" />
     </v-navigation-drawer>
     <v-layout fill-height column>
       <v-flex shrink>
@@ -228,7 +203,7 @@ export default {
                 </v-card-title>
                 <v-card-text class="white-card-text px-3 py-2">
                   <PhylogeneticDistribution
-                    :filteredTablesValues="filteredTablesValues"
+                    :filteredTables="filteredTables"
                     :cmap="cmap"
                 /></v-card-text>
               </v-card>
@@ -241,10 +216,7 @@ export default {
                   <h4>Sunburst</h4>
                 </v-card-title>
                 <v-card-text class="white-card-text">
-                  <Sunburst
-                    :filteredTablesValues="filteredTablesValues"
-                    :cmap="cmap"
-                  />
+                  <Sunburst :filteredTables="filteredTables" :cmap="cmap" />
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -268,7 +240,7 @@ export default {
 
                 <v-card-text class="white-card-text pa-3">
                   <FunctionalDiversity
-                    :filteredTable9Values="filteredTablesValues.table9"
+                    :filteredTable9="filteredTables.table9"
                   />
                 </v-card-text>
               </v-card>

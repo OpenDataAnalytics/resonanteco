@@ -1,5 +1,5 @@
 <script>
-import { dataset } from "@/util/dataLoader";
+import { mapState } from "vuex";
 
 export default {
   name: "SampleList",
@@ -10,7 +10,7 @@ export default {
     }
   },
   computed: {
-    dataset: () => dataset
+    ...mapState(["meta"])
   },
   methods: {
     getPorjectName(sample) {
@@ -41,7 +41,7 @@ export default {
     },
     checkAll(checked) {
       if (checked) {
-        this.$emit("update:selectedSamples", dataset.meta.slice());
+        this.$emit("update:selectedSamples", this.meta.slice());
       } else {
         this.$emit("update:selectedSamples", []);
       }
@@ -71,7 +71,7 @@ export default {
             :value="!!selectedSamples.length"
             :indeterminate="
               !!selectedSamples.length &&
-                selectedSamples.length !== dataset.meta.length
+                selectedSamples.length !== this.meta.length
             "
             @change="checkAll($event)"
           />
@@ -82,7 +82,7 @@ export default {
       <v-list dense>
         <v-list-tile
           class="hover-show-parent"
-          v-for="sample in dataset.meta"
+          v-for="sample in this.meta"
           :key="sample['taxon_oid']"
           :class="{ selected: selectedSamples.indexOf(sample) !== -1 }"
           @click="123"
