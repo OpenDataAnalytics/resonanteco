@@ -130,6 +130,7 @@ export default {
         });
 
       this.debouncedUpdate = debounce(this.update.bind(this), 500);
+      this.update(this.sunburstData);
 
       this.chart(this.$el);
     });

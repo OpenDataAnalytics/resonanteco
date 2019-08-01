@@ -216,7 +216,7 @@ export default {
                   <h4>Sunburst</h4>
                 </v-card-title>
                 <v-card-text class="white-card-text">
-                  <Sunburst :filteredTables="filteredTables" :cmap="cmap" />
+                  <Sunburst v-if="selectedSamples.length" :filteredTables="filteredTables" :cmap="cmap" />
                 </v-card-text>
               </v-card>
             </v-flex>
