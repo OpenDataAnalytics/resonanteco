@@ -103,6 +103,15 @@ export default {
   },
   created() {
     this.load();
+    this.cmap('1');
+    this.cmap('2');
+    this.cmap('3');
+    this.cmap('4');
+    this.cmap('5');
+    this.cmap('6');
+    this.cmap('7');
+    this.cmap('8');
+    this.cmap('9');
   },
   methods: {
     ...mapActions(["load"])
