@@ -27,3 +27,9 @@ The client is a [Vue CLI](https://cli.vuejs.org/) based application. All Vue-CLI
 
 #### linting
 * `npm run lint`
+
+### Data ingestion
+* In the same python envrionment as the server
+* Navigate to `server/data`
+* `export GIRDER_MONGO_URI=mongodb://localhost:27017/girder-resonanteco` if you db is not the default girder
+* execute `python ingest.py ./data`

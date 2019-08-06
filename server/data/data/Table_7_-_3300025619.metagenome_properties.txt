@@ -1,0 +1,13 @@
+Metagenome properties
+---------------------
+
+Number of contigs                                           515725
+GBp                                                         0.343
+Number of features identified                               719643
+CDS                                                         715970
+rRNA                                                        582
+others                                                      3091
+CDSs with COG                                               375385
+CDSs with Pfam                                              360899
+CDSs with SEED subsystem                                    N.A.
+Alpha Diversity                                             10284
