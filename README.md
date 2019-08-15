@@ -20,13 +20,13 @@ The girder interface will be available at http://localhost:8080/girder
 The client is a [Vue CLI](https://cli.vuejs.org/) based application. All Vue-CLI options are available. 
 
 * `cd ./resonanteco/client`
-* `npm install`
-* `npm run serve`
+* `yarn install`
+* `yarn serve`
 * Navigate to `localhost:8081`
 * Register user then login the system
 
 #### linting
-* `npm run lint`
+* `yarn lint`
 
 ### Data ingestion
 * In the same python envrionment as the server
