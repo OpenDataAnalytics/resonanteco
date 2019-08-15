@@ -8,13 +8,13 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@arclamp/sunburst-chart": "^1.4.6",
     "@girder/components": "git+https://github.com/girder/girder_web_components.git",
     "lodash.debounce": "^4.0.8",
     "papaparse": "^5.0.0",
     "resonantgeo": "git+ssh://git@kwgitlab.kitware.com:open-geoscience/resonantgeo.git",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "sunburst-chart": "^1.7.0",
     "vue": "^2.6.8",
     "vue-async-computed": "^3.5.1",
     "vue-google-charts": "^0.3.2",
@@ -33,6 +33,7 @@
     "babel-eslint": "^10.0.1",
     "copy-webpack-plugin": "^4.6.0",
     "eslint": "^5.8.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.9.0",
     "pug": "^2.0.3",
