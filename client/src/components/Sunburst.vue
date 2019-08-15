@@ -124,7 +124,7 @@ export default {
           }
           stack = stack.slice(1);
 
-          return stack.map(d => d.data.name).join(' > ');
+          return stack.map(d => d.data.name).join(" > ");
         })
         .tooltipContent(d => (d.value !== undefined ? `value: ${d.value}` : ""))
         .color(d => this.cmap(d.name))

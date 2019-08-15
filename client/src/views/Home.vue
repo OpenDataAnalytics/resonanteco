@@ -103,15 +103,9 @@ export default {
   },
   created() {
     this.load();
-    this.cmap('1');
-    this.cmap('2');
-    this.cmap('3');
-    this.cmap('4');
-    this.cmap('5');
-    this.cmap('6');
-    this.cmap('7');
-    this.cmap('8');
-    this.cmap('9');
+    for (let i = 1; i <= 9; i++) {
+      this.cmap(String(i));
+    }
   },
   methods: {
     ...mapActions(["load"])
@@ -225,7 +219,11 @@ export default {
                   <h4>Sunburst</h4>
                 </v-card-title>
                 <v-card-text class="white-card-text">
-                  <Sunburst v-if="selectedSamples.length" :filteredTables="filteredTables" :cmap="cmap" />
+                  <Sunburst
+                    v-if="selectedSamples.length"
+                    :filteredTables="filteredTables"
+                    :cmap="cmap"
+                  />
                 </v-card-text>
               </v-card>
             </v-flex>
