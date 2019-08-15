@@ -1,5 +1,5 @@
 <script>
-import Sunburst from "@arclamp/sunburst-chart";
+import Sunburst from "sunburst-chart";
 import debounce from "lodash.debounce";
 
 function treeifyTable8(tab) {
@@ -114,13 +114,17 @@ export default {
       this.chart = Sunburst()
         .width(this.$el.offsetWidth)
         .height(this.$el.offsetHeight)
-        .tooltipShow(d => d.name !== "")
-        .tooltipTitle(d => {
-          const text = this.chart._tooltipTitle(d);
-          return text
-            .split(" > ")
-            .slice(1)
-            .join(" > ");
+        .showTooltip(d => d.name !== "")
+        .tooltipTitle((data, d) => {
+          let stack = [];
+          let curNode = d;
+          while (curNode) {
+            stack.unshift(curNode);
+            curNode = curNode.parent;
+          }
+          stack = stack.slice(1);
+
+          return stack.map(d => d.data.name).join(' > ');
         })
         .tooltipContent(d => (d.value !== undefined ? `value: ${d.value}` : ""))
         .color(d => this.cmap(d.name))
