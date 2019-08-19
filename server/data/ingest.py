@@ -4,43 +4,45 @@ from os import listdir
 import re
 import sys
 
-from resonanteco_server.model.meta import Meta
-from resonanteco_server.model.summary import Summary
-from resonanteco_server.model.table7 import Table7
-from resonanteco_server.model.table8 import Table8
-from resonanteco_server.model.table9 import Table9
+from girder.models.user import User
+from girder.models.collection import Collection
+from girder.models.folder import Folder
+from girder.models.item import Item
 
 
 def ingest(directory):
-    Meta().collection.drop()
-    Summary().collection.drop()
-    Table7().collection.drop()
-    Table8().collection.drop()
-    Table9().collection.drop()
+    table7Dict = {}
+    table8Dict = {}
+    table9Dict = {}
     for filename in [f for f in listdir(directory) if isfile(join(directory, f))]:
         if 'meta.txt' in filename:
-            parseMeta(directory, filename)
+            metaDict = parseCSV(directory, filename)
         if 'summary.txt' in filename:
-            parseSummary(directory, filename)
+            summaryDict = parseCSV(directory, filename)
         elif 'Table_7' in filename:
-            parseTable7(directory, filename)
+            table7 = parseTable(directory, filename)
+            table7Dict[table7['taxon_oid']] = table7
         elif 'Table_8' in filename:
-            parseTable8(directory, filename)
+            table8 = parseTable(directory, filename)
+            table8Dict[table8['taxon_oid']] = table8
         elif 'Table_9' in filename:
-            parseTable9(directory, filename)
+            table9 = parseTable(directory, filename)
+            table9Dict[table9['taxon_oid']] = table9
+
+    admin = User().findOne({"admin": True})
+    datasetsFolder = findDatasetFolder()
+    for taxon_oid in metaDict:
+        data = {"meta_": metaDict[taxon_oid], "summary": summaryDict[taxon_oid],
+                "table7": table7Dict[taxon_oid], "table8": table8Dict[taxon_oid], "table9": table9Dict[taxon_oid]}
+        data['meta'] = extractMeta(data)
+        item = Item().createItem(taxon_oid, admin, datasetsFolder)
+        Item().setMetadata(item, data)
 
 
-def parseMeta(directory, filename):
+def parseCSV(directory, filename):
     with open(join(directory, filename), 'r') as myfile:
         reader = csv.DictReader(myfile, delimiter='\t')
-        for obj in reader:
-            Meta().save(obj)
-
-def parseSummary(directory, filename):
-    with open(join(directory, filename), 'r') as myfile:
-        reader = csv.DictReader(myfile, delimiter='\t')
-        for obj in reader:
-            Summary().save(obj)
+        return {value['taxon_oid']: value for value in list(reader)}
 
 
 def thatFormatReader(taxon_oid, text):
@@ -58,25 +60,46 @@ def thatFormatReader(taxon_oid, text):
     return dic
 
 
-def parseTable7(directory, filename):
+def parseTable(directory, filename):
     taxon_oid = re.search('([0-9]{2,})', filename).groups()[0]
     with open(join(directory, filename), 'r') as myfile:
-        dic = thatFormatReader(taxon_oid, myfile.read())
-        Table7().save(dic)
+        return thatFormatReader(taxon_oid, myfile.read())
 
 
-def parseTable8(directory, filename):
-    taxon_oid = re.search('([0-9]{2,})', filename).groups()[0]
-    with open(join(directory, filename), 'r') as myfile:
-        dic = thatFormatReader(taxon_oid, myfile.read())
-        Table8().save(dic)
+def extractMeta(data):
+    def getSampleType(name):
+        if re.search('soil', name, re.IGNORECASE):
+            return 'Soil'
+        elif re.search('water', name, re.IGNORECASE):
+            return "Water"
+        elif re.search('vegetation', name, re.IGNORECASE):
+            return 'Vegetation'
+
+    def getEcosystem(name):
+        if re.search('arctic', name, re.IGNORECASE):
+            return 'Arctic'
+    name = data['meta_']['Genome Name / Sample Name'].split(' - ')[1]
+    latitude = data['meta_']['Lat']
+    longitude = data['meta_']['Long']
+    sampleType = getSampleType(data['meta_']['Genome Name / Sample Name'])
+    ecosystem = getEcosystem(data['meta_']['Genome Name / Sample Name'])
+    return {
+        'name': name,
+        'latitude': latitude,
+        'longitude': longitude,
+        'timestemp': None,
+        'sampleType': sampleType,
+        'omicsType': None,
+        'ecosystem': ecosystem,
+        'ontology': None,
+        'source': 'LLNL'
+    }
 
 
-def parseTable9(directory, filename):
-    taxon_oid = re.search('([0-9]{2,})', filename).groups()[0]
-    with open(join(directory, filename), 'r') as myfile:
-        dic = thatFormatReader(taxon_oid, myfile.read())
-        Table9().save(dic)
+def findDatasetFolder():
+    collection = Collection().findOne({"name": 'ResonantEco'})
+    datasets = Folder().findOne({"name": "datasets", "parentId": collection['_id']})
+    return Folder().findOne({"name": "LLNL", "parentId": datasets['_id']})
 
 
 if __name__ == '__main__':
