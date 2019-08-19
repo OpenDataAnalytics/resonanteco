@@ -78,43 +78,41 @@ export default {
         </v-list-tile-action>
       </v-list-tile>
     </v-list>
-    <vue-nice-scrollbar classes="my-scrollbar">
-      <v-list dense>
-        <v-list-tile
-          class="hover-show-parent"
-          v-for="sample in this.meta"
-          :key="sample['taxon_oid']"
-          :class="{ selected: selectedSamples.indexOf(sample) !== -1 }"
-          @click="123"
+    <v-list dense>
+      <v-list-tile
+        class="hover-show-parent"
+        v-for="sample in this.meta"
+        :key="sample['taxon_oid']"
+        :class="{ selected: selectedSamples.indexOf(sample) !== -1 }"
+        @click="123"
+      >
+        <v-list-tile-content @click="toggle(sample)">
+          <v-list-tile-title>
+            <v-tooltip right open-delay="500">
+              <template #activator="data">
+                <span v-on="data.on">{{ getPorjectName(sample) }}</span>
+              </template>
+              {{ getPorjectName(sample) }}
+            </v-tooltip>
+          </v-list-tile-title>
+        </v-list-tile-content>
+        <v-list-tile-action
+          class="hover-show-child"
+          :style="{
+            display:
+              selectedSamples.indexOf(sample) !== -1 &&
+              selectedSamples.length > 1
+                ? 'inherit'
+                : ''
+          }"
         >
-          <v-list-tile-content @click="toggle(sample)">
-            <v-list-tile-title>
-              <v-tooltip right open-delay="500">
-                <template #activator="data">
-                  <span v-on="data.on">{{ getPorjectName(sample) }}</span>
-                </template>
-                {{ getPorjectName(sample) }}
-              </v-tooltip>
-            </v-list-tile-title>
-          </v-list-tile-content>
-          <v-list-tile-action
-            class="hover-show-child"
-            :style="{
-              display:
-                selectedSamples.indexOf(sample) !== -1 &&
-                selectedSamples.length > 1
-                  ? 'inherit'
-                  : ''
-            }"
-          >
-            <v-checkbox
-              :value="selectedSamples.indexOf(sample) !== -1"
-              @change="check($event, sample)"
-            ></v-checkbox>
-          </v-list-tile-action>
-        </v-list-tile>
-      </v-list>
-    </vue-nice-scrollbar>
+          <v-checkbox
+            :value="selectedSamples.indexOf(sample) !== -1"
+            @change="check($event, sample)"
+          ></v-checkbox>
+        </v-list-tile-action>
+      </v-list-tile>
+    </v-list>
   </div>
 </template>
 
@@ -123,11 +121,6 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.nice-bar {
-  margin: unset;
-  flex: 1;
 }
 
 .v-list {
@@ -158,20 +151,6 @@ export default {
 .hover-show-child {
   .v-icon.theme--light {
     color: rgb(206, 206, 206);
-  }
-}
-
-.my-scrollbar {
-  .v-list .v-list__tile {
-    font-weight: 500;
-  }
-
-  &.theme-light .nice-bar-slider-y {
-    background: #ccc;
-  }
-
-  .nice-bar-slider-x {
-    display: none;
   }
 }
 </style>
