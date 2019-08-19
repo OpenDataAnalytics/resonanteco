@@ -18,8 +18,25 @@ const store = new Vuex.Store({
   actions: {
     async load({ state }) {
       var { data: records } = await girder.rest.get("record");
-      state.meta = records.meta;
-      Object.assign(state, records);
+
+      Object.assign(state, {
+        meta: records.map(record => ({
+          ...record.meta.meta_,
+          ...record.meta.meta
+        })),
+        summary: records
+          .filter(record => record.meta.summary)
+          .map(record => record.meta.summary),
+        table7: records
+          .filter(record => record.meta.table7)
+          .map(record => record.meta.table7),
+        table8: records
+          .filter(record => record.meta.table8)
+          .map(record => record.meta.table8),
+        table9: records
+          .filter(record => record.meta.table9)
+          .map(record => record.meta.table9)
+      });
       console.log(state);
     }
   }

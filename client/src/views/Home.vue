@@ -31,31 +31,15 @@ export default {
   computed: {
     ...mapState(["meta", "summary", "table7", "table8", "table9"]),
     metaNames() {
-      return this.meta.map(meta => meta["Genome Name / Sample Name"]);
+      return this.meta.map(meta => meta.name);
     },
     sampleTypes() {
-      var types = this.metaNames
-        .map(name => {
-          if (/soil/i.exec(name)) {
-            return "Soil";
-          } else if (/water/.exec(name)) {
-            return "Water";
-          } else if (/vegetation/.exec(name)) {
-            return "Vegetation";
-          }
-        })
-        .filter(value => value);
+      var types = this.meta.map(meta => meta.material).filter(value => value);
       return _.uniq(types);
     },
     ecosystems() {
-      var types = this.metaNames
-        .map(name => {
-          if (/arctic/i.exec(name)) {
-            return "Arctic";
-          }
-        })
-        .filter(value => value);
-      return _.uniq(types);
+      var ecosystems = this.meta.map(meta => meta.ecosystem).filter(value => value);
+      return _.uniq(ecosystems);
     },
     numberOfMetagenomes() {
       return this.meta.filter(meta => meta.Sequencing === "Metagenome").length;
@@ -179,7 +163,7 @@ export default {
           Across all projects and samples
         </template>
         <template v-else-if="selectedSamples.length === 1">
-          {{ selectedSamples[0]["Genome Name / Sample Name"] }}
+          {{ selectedSamples[0].name }}
         </template>
         <template v-else>
           Multiple items

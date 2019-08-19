@@ -7,12 +7,6 @@ from girder.models.collection import Collection
 from girder.models.folder import Folder
 from girder.models.item import Item
 
-from ..model.meta import Meta
-from ..model.summary import Summary
-from ..model.table7 import Table7
-from ..model.table8 import Table8
-from ..model.table9 import Table9
-
 
 class Record(Resource):
     def __init__(self):
@@ -26,10 +20,4 @@ class Record(Resource):
         Description('')
         .errorResponse())
     def getAll(self, params):
-        return {
-            'meta': list(Meta().find()),
-            'summary': list(Summary().find()),
-            'table7': list(Table7().find()),
-            'table8': list(Table8().find()),
-            'table9': list(Table9().find())
-        }
+        return Item().find({'meta.meta':{'$exists':1}})

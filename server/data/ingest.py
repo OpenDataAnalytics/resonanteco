@@ -67,7 +67,7 @@ def parseTable(directory, filename):
 
 
 def extractMeta(data):
-    def getSampleType(name):
+    def getMaterial(name):
         if re.search('soil', name, re.IGNORECASE):
             return 'Soil'
         elif re.search('water', name, re.IGNORECASE):
@@ -81,17 +81,17 @@ def extractMeta(data):
     name = data['meta_']['Genome Name / Sample Name'].split(' - ')[1]
     latitude = data['meta_']['Lat']
     longitude = data['meta_']['Long']
-    sampleType = getSampleType(data['meta_']['Genome Name / Sample Name'])
+    material = getMaterial(data['meta_']['Genome Name / Sample Name'])
     ecosystem = getEcosystem(data['meta_']['Genome Name / Sample Name'])
     return {
         'name': name,
         'latitude': latitude,
         'longitude': longitude,
         'timestemp': None,
-        'sampleType': sampleType,
-        'omicsType': None,
+        'material': material,
+        'feature': None,
+        'biome': None,
         'ecosystem': ecosystem,
-        'ontology': None,
         'source': 'LLNL'
     }
 

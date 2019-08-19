@@ -13,7 +13,7 @@ export default {
   computed: {
     ...mapState(["meta"]),
     sitesFeature() {
-      var grouped = _.groupBy(this.meta, sample => {
+      var grouped = _.groupBy(this.meta.filter(sample=>sample.Lat&&sample.Long), sample => {
         return sample.Lat + sample.Long;
       });
       return {

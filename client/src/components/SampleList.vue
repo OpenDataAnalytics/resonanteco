@@ -14,7 +14,7 @@ export default {
   },
   methods: {
     getPorjectName(sample) {
-      return sample["Genome Name / Sample Name"].split(" - ")[1];
+      return sample.name;
     },
     toggle(sample) {
       if (this.selectedSamples.indexOf(sample) !== -1) {
@@ -41,7 +41,10 @@ export default {
     },
     checkAll(checked) {
       if (checked) {
-        this.$emit("update:selectedSamples", this.meta.slice());
+        this.$emit(
+          "update:selectedSamples",
+          this.meta.filter(meta => meta.source === "LLNL").slice()
+        );
       } else {
         this.$emit("update:selectedSamples", []);
       }
@@ -84,9 +87,11 @@ export default {
         v-for="sample in this.meta"
         :key="sample['taxon_oid']"
         :class="{ selected: selectedSamples.indexOf(sample) !== -1 }"
-        @click="123"
+        v-on="sample.source === 'LLNL' ? { click: () => 123 } : {}"
       >
-        <v-list-tile-content @click="toggle(sample)">
+        <v-list-tile-content
+          v-on="sample.source === 'LLNL' ? { click: () => toggle(sample) } : {}"
+        >
           <v-list-tile-title>
             <v-tooltip right open-delay="500">
               <template #activator="data">
@@ -107,6 +112,7 @@ export default {
           }"
         >
           <v-checkbox
+            v-if="sample.source === 'LLNL'"
             :value="selectedSamples.indexOf(sample) !== -1"
             @change="check($event, sample)"
           ></v-checkbox>

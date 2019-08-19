@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     getPorjectName(sample) {
-      return sample["Genome Name / Sample Name"].split(" - ")[1];
+      return sample.name;
     },
     table7Sum(property) {
       return _.sum(
