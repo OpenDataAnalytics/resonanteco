@@ -30,6 +30,8 @@ def get_envo_number(envo):
             return None
 
 def create_item_from_row(row):
+    if not row[7]:
+        return
     print("Ingesting {}".format(row[0]))
     item = gc.createItem(parent['_id'], row[0], reuseExisting=True)
     metadata = {
