@@ -1,5 +1,5 @@
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "SampleList",
@@ -10,9 +10,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(["meta"])
+    ...mapState(["meta", "selectedSampleType"]),
+    filteredMeta() {
+      if (!this.selectedSampleType) {
+        return this.meta;
+      } else {
+        return this.meta.filter(
+          meta => meta.material === this.selectedSampleType
+        );
+      }
+    }
   },
   methods: {
+    ...mapMutations(["setSelectedSampleType"]),
     getPorjectName(sample) {
       return sample.name;
     },
@@ -73,18 +83,29 @@ export default {
           <v-checkbox
             :value="!!selectedSamples.length"
             :indeterminate="
-              !!selectedSamples.length &&
-                selectedSamples.length !== this.meta.length
+              !!selectedSamples.length && selectedSamples.length !== meta.length
             "
             @change="checkAll($event)"
           />
         </v-list-tile-action>
       </v-list-tile>
     </v-list>
+    <v-expand-transition>
+      <v-flex v-if="selectedSampleType" shrink>
+        <v-chip
+          small
+          close
+          dark
+          color="teal darken-1"
+          @input="setSelectedSampleType(null)"
+          >{{ selectedSampleType }}</v-chip
+        >
+      </v-flex>
+    </v-expand-transition>
     <v-list dense>
       <v-list-tile
         class="hover-show-parent"
-        v-for="sample in this.meta"
+        v-for="sample in filteredMeta"
         :key="sample['taxon_oid']"
         :class="{ selected: selectedSamples.indexOf(sample) !== -1 }"
         v-on="sample.source === 'LLNL' ? { click: () => 123 } : {}"

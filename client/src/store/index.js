@@ -7,6 +7,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    selectedSampleType: null,
     meta: [],
     summary: [],
     table7: [],
@@ -14,7 +15,11 @@ const store = new Vuex.Store({
     table9: []
   },
   getters: {},
-  mutations: {},
+  mutations: {
+    setSelectedSampleType(state, type) {
+      state.selectedSampleType = type;
+    }
+  },
   actions: {
     async load({ state }) {
       var { data: records } = await girder.rest.get("record");

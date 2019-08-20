@@ -1,7 +1,7 @@
 <script>
 import _ from "lodash";
 import d3 from "d3";
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 import NavigationBar from "@/components/NavigationBar";
 import SampleList from "@/components/SampleList";
@@ -29,20 +29,35 @@ export default {
     };
   },
   computed: {
-    ...mapState(["meta", "summary", "table7", "table8", "table9"]),
+    ...mapState([
+      "meta",
+      "summary",
+      "table7",
+      "table8",
+      "table9",
+      "selectedSampleType"
+    ]),
     metaNames() {
       return this.meta.map(meta => meta.name);
     },
     sampleTypes() {
       var types = this.meta.map(meta => meta.material).filter(value => value);
-      return _.uniq(types);
+      return Object.entries(_.mapValues(_.groupBy(types), "length"));
+    },
+    featureTypes() {
+      var types = this.meta.map(meta => meta.feature).filter(value => value);
+      return Object.entries(
+        _.mapValues(_.groupBy(types, type => type), "length")
+      );
     },
     ecosystems() {
-      var ecosystems = this.meta.map(meta => meta.ecosystem).filter(value => value);
-      return _.uniq(ecosystems);
+      var ecosystems = this.meta
+        .map(meta => meta.ecosystem || meta.biome)
+        .filter(value => value);
+      return Object.entries(_.mapValues(_.groupBy(ecosystems), "length"));
     },
     numberOfMetagenomes() {
-      return this.meta.filter(meta => meta.Sequencing === "Metagenome").length;
+      return this.meta.length;
     },
     numberOfMetatranscriptomes() {
       return this.meta.filter(meta => meta.Sequencing === "Metatranscriptomes")
@@ -92,6 +107,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(["setSelectedSampleType"]),
     ...mapActions(["load"])
   }
 };
@@ -112,41 +128,79 @@ export default {
               <SamplesLocation />
             </v-flex>
             <v-flex>
+              <v-card class="fill-height" color="blue-grey darken-1" dark>
+                <v-card-title>
+                  <h3>Ecosystems</h3>
+                </v-card-title>
+                <v-card-text>
+                  <h4>
+                    <template v-for="([type, count], i) of ecosystems">
+                      <span :key="type">{{ type }} ({{ count }})</span>
+                      <template v-if="i !== ecosystems.length - 1"
+                        >,
+                      </template>
+                    </template>
+                  </h4>
+                </v-card-text>
+              </v-card>
+            </v-flex>
+            <v-flex>
+              <v-card class="fill-height" color="indigo darken-1" dark>
+                <v-responsive :aspect-ratio="16 / 10">
+                  <v-card-title>
+                    <h3>Feature</h3>
+                  </v-card-title>
+                  <v-card-text>
+                    <h4>
+                      <template v-for="([type, count], i) of featureTypes">
+                        <span :key="type">{{ type }} ({{ count }})</span>
+                        <template v-if="i !== featureTypes.length - 1"
+                          >,
+                        </template>
+                      </template>
+                    </h4>
+                  </v-card-text>
+                </v-responsive>
+              </v-card>
+            </v-flex>
+            <v-flex>
               <v-card class="fill-height" color="teal darken-1" dark>
                 <v-responsive :aspect-ratio="16 / 10">
                   <v-card-title>
                     <h3>Sample types</h3>
                   </v-card-title>
                   <v-card-text>
-                    <h4>{{ sampleTypes.join(",") }}</h4>
+                    <h4>
+                      <template v-for="([type, count], i) of sampleTypes">
+                        <span
+                          :key="type"
+                          class="sample-type"
+                          :class="{ selected: type === selectedSampleType }"
+                          @click="
+                            selectedSampleType === type
+                              ? setSelectedSampleType(null)
+                              : setSelectedSampleType(type)
+                          "
+                          >{{ type }} ({{ count }})</span
+                        >
+                        <template v-if="i !== sampleTypes.length - 1"
+                          >,
+                        </template>
+                      </template>
+                    </h4>
                   </v-card-text>
                 </v-responsive>
               </v-card>
             </v-flex>
-            <v-flex>
-              <v-card class="fill-height" color="blue-grey darken-1" dark>
-                <v-card-title>
-                  <h3>Ecosystems</h3>
-                </v-card-title>
-                <v-card-text>
-                  <h4>{{ ecosystems.join(",") }}</h4>
-                </v-card-text>
-              </v-card>
-            </v-flex>
             <!-- 4 -->
             <v-flex>
-              <v-card class="fill-height" color="indigo darken-1" dark>
+              <v-card class="fill-height" color="orange darken-2" dark>
                 <v-card-title>
                   <h3># metagenome</h3>
                 </v-card-title>
                 <v-card-text
                   ><h4>{{ numberOfMetagenomes }}</h4>
                 </v-card-text>
-              </v-card>
-            </v-flex>
-            <!-- 5 -->
-            <v-flex>
-              <v-card class="fill-height" color="orange darken-2" dark>
                 <v-card-title>
                   <h3># Metatranscriptomes</h3>
                 </v-card-title>
@@ -290,6 +344,17 @@ export default {
       display: flex;
       flex-direction: column;
     }
+  }
+}
+
+.sample-type {
+  &.selected {
+    text-decoration: underline;
+  }
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
   }
 }
 </style>

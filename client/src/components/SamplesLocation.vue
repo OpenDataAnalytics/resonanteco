@@ -13,9 +13,12 @@ export default {
   computed: {
     ...mapState(["meta"]),
     sitesFeature() {
-      var grouped = _.groupBy(this.meta.filter(sample=>sample.Lat&&sample.Long), sample => {
-        return sample.Lat + sample.Long;
-      });
+      var grouped = _.groupBy(
+        this.meta.filter(sample => sample.Lat && sample.Long),
+        sample => {
+          return sample.Lat + sample.Long;
+        }
+      );
       return {
         type: "FeatureCollection",
         features: Object.values(grouped).map(group => {
