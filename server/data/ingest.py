@@ -81,6 +81,7 @@ def extractMeta(data):
     name = data['meta_']['Genome Name / Sample Name'].split(' - ')[1]
     latitude = data['meta_']['Lat']
     longitude = data['meta_']['Long']
+    omics = data['meta_']['Transect']
     material = getMaterial(data['meta_']['Genome Name / Sample Name'])
     ecosystem = getEcosystem(data['meta_']['Genome Name / Sample Name'])
     return {
@@ -90,8 +91,8 @@ def extractMeta(data):
         'timestemp': None,
         'material': material,
         'feature': None,
-        'biome': None,
-        'ecosystem': ecosystem,
+        'biome': ecosystem,
+        'omics': omics,
         'source': 'LLNL'
     }
 
