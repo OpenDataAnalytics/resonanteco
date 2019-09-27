@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <v-toolbar app clipped-left dense>
+  <v-app-bar app flat>
     <v-toolbar-title>
       <v-tooltip open-delay="2000" bottom>
         <template #activator="{ on }">
@@ -29,14 +29,26 @@ export default {
         <span>v{{ version }}</span>
       </v-tooltip>
     </v-toolbar-title>
-    <v-tabs class="navigation-tabs ml-3" color="transparent">
+    <v-tabs class="navigation-tabs" right icons-and-text>
       <v-tab to="/">
-        Explore
+        Home
+        <v-icon>mdi-home</v-icon>
+      </v-tab>
+      <v-tab to="/data">
+        Data
+        <v-icon>mdi-chart-donut</v-icon>
+      </v-tab>
+      <v-tab to="/workspace">
+        Workspaces
+        <v-icon>mdi-sitemap</v-icon>
+      </v-tab>
+      <v-tab to="/analysis">
+        Analysis
+        <v-icon>mdi-chart-timeline-variant</v-icon>
       </v-tab>
     </v-tabs>
-    <v-spacer></v-spacer>
     <UserButton @user="girderRest.logout()" />
-  </v-toolbar>
+  </v-app-bar>
 </template>
 
 <style lang="scss">

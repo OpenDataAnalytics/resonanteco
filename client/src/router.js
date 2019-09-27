@@ -3,7 +3,7 @@ import Router from "vue-router";
 
 import girder from "./girder";
 import Login from "@/views/Login.vue";
-import Home from "@/views/Home.vue";
+import Landing from "@/views/Landing.vue";
 
 Vue.use(Router);
 
@@ -24,8 +24,8 @@ export default new Router({
     },
     {
       path: "/",
-      name: "Home",
-      component: Home,
+      name: "Landing",
+      component: Landing,
       beforeEnter
     }
   ]

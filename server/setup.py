@@ -4,7 +4,7 @@
 from setuptools import setup, find_packages
 
 requirements = [
-    'girder==3.0.0a7.dev148',
+    'girder==3.0.3',
     'girder-client'
 ]
 

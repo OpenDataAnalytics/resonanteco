@@ -17,7 +17,7 @@ module.exports = {
     config.module
       .rule("additional")
       .test(/\.m?jsx?$/)
-      .include.add(/@girder\/components/)
+      .include.add(/@girder\/components\/src/)
       .add(/vue-utilities/)
       .end()
       .use()
