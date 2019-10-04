@@ -34,7 +34,7 @@ export default {
         { params }
       );
       records.sort((a, b) => (a.material > b.material ? 1 : -1));
-      return records;
+      return [...records];
     }
   },
   watch: {
@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     initialize() {
-      var margin = { top: 70, right: 80, bottom: 70, left: 40 };
+      var margin = { top: 70, right: 40, bottom: 70, left: 40 };
       var width = this.$el.clientWidth - margin.left - margin.right;
       this.width = width;
       var height = this.$el.clientHeight - margin.top - margin.bottom;
@@ -179,21 +179,33 @@ export default {
         .attr("text-anchor", "end")
         .text("Count");
 
-      svg
+      var barContainer = svg
         .selectAll(".bar")
         .data(records, record => record.feature + record.material)
         .enter()
+        .append("g")
+        .attr("class", "bar-container")
+        .attr(
+          "transform",
+          record => `translate(${x(records.indexOf(record))},0)`
+        );
+
+      barContainer
+        .append("line")
+        .attr("class", "indicator")
+        .attr("x1", x.bandwidth() / 2)
+        .attr("x2", x.bandwidth() / 2)
+        .attr("y2", height);
+
+      var bar = barContainer
         .append("rect")
         .attr("class", "bar")
-        .attr("x", record => {
-          return x(records.indexOf(record));
-        })
-        .attr("y", record => {
-          return y(record.count);
-        })
         .attr("width", x.bandwidth())
         .attr("height", record => {
           return height - y(record.count);
+        })
+        .attr("y", record => {
+          return y(record.count);
         })
         .attr("fill", d =>
           d3.interpolateRgb(
@@ -210,13 +222,10 @@ export default {
         .style(
           "transform-origin",
           record =>
-            `${x(records.indexOf(record)) + x.bandwidth() / 2}px ${y(
-              record.count
-            ) +
+            `${x.bandwidth() / 2}px ${y(record.count) +
               (height - y(record.count)) / 2}px`
         )
         .on("click", record => {
-          // d3.event.preventDefault();
           var index = this.featureSelections.indexOf(record.feature);
           var index2 = this.materialSelections.indexOf(record.material);
           if (index !== -1 && index2 !== -1) {
@@ -241,10 +250,9 @@ export default {
               record.material
             ]);
           }
-          // return false;
-        })
-        .append("title")
-        .text(d => `${d.material} / ${d.feature}\n${d.count}`);
+        });
+
+      bar.append("title").text(d => `${d.material} / ${d.feature}\n${d.count}`);
     },
     out() {
       console.log(arguments);
@@ -265,12 +273,28 @@ export default {
 
 <style lang="scss">
 .feature-material-chart {
-  .bar {
-    transition: transform 0.2s;
-    stroke-width: 2px;
+  .bar-container {
+    .indicator {
+      visibility: hidden;
+      fill: none;
+      stroke: grey;
+      stroke-dasharray: 3 5;
+      stroke-width: 1;
+    }
 
     &:hover {
-      transform: scaleX(0.93) scaleY(0.98);
+      .indicator {
+        visibility: visible;
+      }
+    }
+
+    .bar {
+      transition: transform 0.2s;
+      stroke-width: 2px;
+
+      &:hover {
+        transform: scaleX(0.93) scaleY(0.98);
+      }
     }
   }
 

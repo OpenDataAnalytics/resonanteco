@@ -86,8 +86,8 @@ def extractMeta(data):
     ecosystem = getEcosystem(data['meta_']['Genome Name / Sample Name'])
     return {
         'name': name,
-        'latitude': latitude,
-        'longitude': longitude,
+        'latitude': float(latitude),
+        'longitude': float(longitude),
         'timestemp': None,
         'material': material,
         'feature': None,

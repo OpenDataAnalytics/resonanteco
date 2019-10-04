@@ -33,9 +33,16 @@ def create_item_from_row(row):
         return
     print("Ingesting {}".format(row[0]))
     item = gc.createItem(parent['_id'], row[0], reuseExisting=True)
+    latitude = None
+    longitude = None
+    try:
+        latitude = float(row[60])
+        longitude = float(row[59])
+    except:
+        pass
     metadata = {
-        'latitude': row[60],
-        'longitude': row[59],
+        'latitude': latitude,
+        'longitude': longitude,
         'source': 'JGI'
     }
     metadata['timestamp'] = row[48]

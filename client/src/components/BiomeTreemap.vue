@@ -71,13 +71,21 @@ export default {
         .paddingInner(2);
       var nodes = layout(this.treemapData);
 
+      var leaves = nodes.leaves();
+      if (leaves.length === 1 && leaves[0].data.name === "biome") {
+        d3.select(this.$el)
+          .selectAll(".leaf")
+          .remove();
+        return;
+      }
+
       var svg = d3.select(this.$el);
       svg
         .selectAll(".leaf")
-        .data(nodes.leaves(), d => d.data.name)
+        .data(leaves, d => d.data.name)
         .join(
           enter => {
-            var leaf = enter
+            var leaves = enter
               .append("div")
               .attr("class", "leaf")
               .classed(
@@ -112,26 +120,27 @@ export default {
                 }
               });
 
-            leaf
+            leaves
               .append("div")
               .attr("class", "leaf-title")
               .text(d => {
                 if (d.y1 - d.y0 < 14) {
                   return;
                 }
-                if (d.x1 - d.x0 < d.data.name.length * 10) {
+                var name = d.data.name.replace(" biome", "");
+                if (d.x1 - d.x0 < name.length * 10) {
                   return;
                 }
-                return d.data.name;
+                return name;
               });
 
-            leaf
+            leaves
               .append("div")
               .attr("class", "leaf-value")
               .text(d => d.data.value);
           },
           update => {
-            var leaf = update
+            var leaves = update
               .classed(
                 "selected",
                 d => this.selections.indexOf(d.data.name) !== -1
@@ -144,7 +153,7 @@ export default {
               .style("height", d => `${d.y1 - d.y0}px`)
               .style("background-color", d => mapColor("biome", d.data.name));
 
-            leaf.select(".leaf-title").text(d => {
+            leaves.select(".leaf-title").text(d => {
               if (d.y1 - d.y0 < 14) {
                 return;
               }
@@ -153,7 +162,7 @@ export default {
               }
               return d.data.name;
             });
-            leaf.select(".leaf-value").text(d => d.data.value);
+            leaves.select(".leaf-value").text(d => d.data.value);
           },
           remove => {
             remove
@@ -188,14 +197,16 @@ export default {
     position: absolute;
     overflow: hidden;
     transition: transform 0.4s;
+    border: solid 2px transparent;
 
     &:hover {
       transition: transform 0.2s;
-      transform: scale(0.98);
+      transform: scale(0.97) !important;
     }
 
     &.selected {
       border: solid 2px black;
+      transform: scale(0.99);
     }
 
     .leaf-title {

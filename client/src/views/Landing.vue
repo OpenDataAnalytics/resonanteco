@@ -1,5 +1,8 @@
 <script>
+import { mapState, mapMutations } from "vuex";
+
 import NavigationBar from "@/components/NavigationBar";
+import WidgetContainer from "@/components/WidgetContainer";
 import SamplesLocation from "@/components/SamplesLocation";
 import BiomeTreemap from "@/components/BiomeTreemap";
 import FeatureVsMaterialChart from "@/components/FeatureVsMaterialChart";
@@ -8,18 +11,58 @@ export default {
   name: "Landing",
   components: {
     NavigationBar,
+    WidgetContainer,
     SamplesLocation,
     BiomeTreemap,
     FeatureVsMaterialChart
   },
   data: () => ({
-    selectedBiomes: [],
-    selectedFeatures: [],
-    selectedMaterials: [],
+    // selectedBiomes: [],
+    // selectedFeatures: [],
+    // selectedMaterials: [],
+    // selectedRegion: null,
     filter: null,
     conditionChanged: false
   }),
   computed: {
+    ...mapState([
+      "selectedBiomes",
+      "selectedFeatures",
+      "selectedMaterials",
+      "selectedRegion"
+    ]),
+    selectedBiomes_: {
+      get() {
+        return this.selectedBiomes;
+      },
+      set(values) {
+        this.setSelectedBiomes(values);
+      }
+    },
+    selectedFeatures_: {
+      get() {
+        return this.selectedFeatures;
+      },
+      set(values) {
+        this.setSelectedFeatures(values);
+      }
+    },
+    selectedMaterials_: {
+      get() {
+        return this.selectedMaterials;
+      },
+      set(values) {
+        this.setSelectedMaterials(values);
+      }
+    },
+    selectedRegion_: {
+      get() {
+        return this.selectedRegion;
+      },
+      set(values) {
+        this.setSelectedRegion(values);
+      }
+    },
     conditions() {
       var conditions = {};
       if (this.selectedBiomes.length) {
@@ -40,6 +83,12 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+      "setSelectedBiomes",
+      "setSelectedFeatures",
+      "setSelectedMaterials",
+      "setSelectedRegion"
+    ]),
     calculateFilter() {
       var filter = {};
       if (this.selectedBiomes.length) {
@@ -51,6 +100,9 @@ export default {
       if (this.selectedMaterials.length) {
         filter["material"] = this.selectedMaterials;
       }
+      if (this.selectedRegion) {
+        filter.selectedRegion = this.selectedRegion.geometry;
+      }
       if (Object.keys(filter).length !== 0) {
         return filter;
       }
@@ -61,7 +113,10 @@ export default {
       this.conditionChanged = false;
     },
     clear() {
-      this.selectedBiomes = [];
+      this.selectedBiomes_ = [];
+      this.selectedFeatures_ = [];
+      this.selectedMaterials_ = [];
+      this.selectedRegion_ = null;
       this.filter = null;
       this.conditionChanged = false;
     }
@@ -75,24 +130,29 @@ export default {
     <v-row class="flex-column fill-height" no-gutters>
       <v-col class="flex-grow-0">
         <v-toolbar dense flat dark>
-          <v-toolbar-title>Query</v-toolbar-title>
+          <v-toolbar-title>Filter</v-toolbar-title>
           <div class="flex-grow-1 ml-2">
+            <v-chip
+              close
+              v-if="selectedRegion_"
+              @click:close="selectedRegion_ = null"
+            >
+              Selected Region
+            </v-chip>
             <template v-for="(values, key) in conditions">
               <v-chip
                 close
                 v-for="value in values"
                 :key="key + value"
                 class="ml-1"
-                @click:close="
-                  values.splice(values.indexOf(value), 1)
-                "
-                >{{ value }}</v-chip
+                @click:close="values.splice(values.indexOf(value), 1)"
               >
+                {{ value }}
+              </v-chip>
             </template>
           </div>
           <v-btn
             v-if="(conditionChanged && conditions) || (!conditions && !filter)"
-            :disabled="!conditions"
             light
             small
             min-height="30"
@@ -118,22 +178,40 @@ export default {
           <v-col>
             <v-row no-gutters class="flex-column fill-height">
               <v-col>
-                <SamplesLocation :filter="filter" />
+                <WidgetContainer>
+                  <template #title>
+                    Locations
+                  </template>
+                  <SamplesLocation
+                    :filter="filter"
+                    :selectedRegion.sync="selectedRegion_"
+                  />
+                </WidgetContainer>
               </v-col>
               <v-col>
-                <BiomeTreemap
-                  :filter="filter"
-                  :selections.sync="selectedBiomes"
-                />
+                <WidgetContainer>
+                  <template #title>
+                    Biomes
+                  </template>
+                  <BiomeTreemap
+                    :filter="filter"
+                    :selections.sync="selectedBiomes_"
+                  />
+                </WidgetContainer>
               </v-col>
             </v-row>
           </v-col>
           <v-col>
-            <FeatureVsMaterialChart
-              :filter="filter"
-              :featureSelections.sync="selectedFeatures"
-              :materialSelections.sync="selectedMaterials"
-            />
+            <WidgetContainer>
+              <template #title>
+                Features & Materials
+              </template>
+              <FeatureVsMaterialChart
+                :filter="filter"
+                :featureSelections.sync="selectedFeatures_"
+                :materialSelections.sync="selectedMaterials_"
+              />
+            </WidgetContainer>
           </v-col>
         </v-row>
       </v-col>

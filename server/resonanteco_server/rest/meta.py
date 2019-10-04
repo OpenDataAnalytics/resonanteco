@@ -69,6 +69,15 @@ class Meta(Resource):
                         },
                         "count": {
                             "$sum": 1
+                        },
+                        "features": {
+                            "$addToSet": "$meta.meta.feature"
+                        },
+                        "materials": {
+                            "$addToSet": "$meta.meta.material"
+                        },
+                        "biomes": {
+                            "$addToSet": "$meta.meta.biome"
                         }
                     }
                 },
@@ -77,6 +86,9 @@ class Meta(Resource):
                         "_id": 0,
                         "latitude": "$_id.latitude",
                         "longitude": "$_id.longitude",
+                        "features": 1,
+                        "materials": 1,
+                        "biomes": 1,
                         "count": 1
                     }
                 }
@@ -125,7 +137,15 @@ def getMatchConditions(filter):
     if filter:
         conditions = {}
         for key in filter:
-            conditions['meta.meta.'+key] = {"$in": filter[key]}
+            if isinstance(filter[key], list):
+                conditions['meta.meta.'+key] = {"$in": filter[key]}
+            if 'selectedRegion' in filter:
+                coordinates = filter['selectedRegion']['coordinates'][0]
+                print(coordinates)
+                conditions['meta.meta.longitude'] = {
+                    "$gt": coordinates[0][0], "$lt": coordinates[2][0]}
+                conditions['meta.meta.latitude'] = {
+                    "$gt": coordinates[0][1], "$lt": coordinates[1][1]}
         matches.append({
             "$match": conditions
         })

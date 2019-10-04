@@ -1,5 +1,8 @@
 import * as d3 from "d3";
 
+// console.log(d3.interpolateRgb("brown", "red"));
+// d3.interpolateBrown = d3.interpolateRgb("brown", "red");
+
 function colorScale(values, interpolator) {
   var scale = d3.scaleSequential(interpolator);
   return function(value) {
@@ -16,24 +19,24 @@ var colormap = {
       "coastal inlet",
       "marine pelagic biome",
       "ocean biome",
-      "microbial mat",
       "marine pelagic zone",
       "marine oxygen minimum zone",
       "freshwater lake",
       "epilimnion"
     ],
-    interpolateGreens: ["grassland biome", "farm", "sphagnum bog", "watershed"]
+    interpolateOranges: ["grassland biome", "farm", "sphagnum bog", "watershed"],
+    interpolateRdPu:["microbial mat"]
   },
   material: {
     interpolateBlues: [
       "coastal sea water",
       "sea water",
-      "microbial mat material",
       "deep marine sediment",
       "fresh water",
       "hypersaline water"
     ],
-    interpolateGreens: ["soil", "grassland soil", "farm soil"]
+    interpolateOranges: ["soil", "grassland soil", "farm soil"],
+    interpolateRdPu:["microbial mat material"]
   },
   biome: {
     interpolateBlues: [
@@ -46,7 +49,7 @@ var colormap = {
       "freshwater lake biome",
       "hypersaline lake"
     ],
-    interpolateGreens: [
+    interpolateOranges: [
       "terrestrial biome",
       "anthropogenic terrestrial biome",
       "grassland biome",
