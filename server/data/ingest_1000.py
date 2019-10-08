@@ -1,20 +1,14 @@
 import csv
-import girder_client
+from girder_client import GirderClient
 import requests
 import json
-
-
-gc = girder_client.GirderClient(apiUrl='http://localhost:8080/api/v1')
-gc.authenticate('girder', 'girder')
-parent = gc.resourceLookup('collection/ResonantEco/datasets/JGI')
-
-lookup_table = {}
-with open('envo_lookup.json', 'r') as f:
-    lookup_table = json.load(f)
-print(lookup_table)
+import sys
 
 
 def lookup_envo_number(envo):
+    with open('envo_lookup.json', 'r') as f:
+        lookup_table = json.load(f)
+
     if envo in lookup_table:
         return lookup_table[envo]
     response = requests.get('https://www.ebi.ac.uk/ols/api/select',
@@ -28,10 +22,11 @@ def lookup_envo_number(envo):
         return None
 
 
-def create_item_from_row(row):
+def create_item_from_row(row, gc):
     if not row[7]:
         return
     print("Ingesting {}".format(row[0]))
+    parent = gc.resourceLookup('collection/ResonantEco/datasets/JGI')
     item = gc.createItem(parent['_id'], row[0], reuseExisting=True)
     latitude = None
     longitude = None
@@ -54,15 +49,24 @@ def create_item_from_row(row):
     gc.addMetadataToItem(item['_id'], {'meta': metadata})
 
 
-def create_items_from_csv(path):
+def create_items_from_csv(path, gc):
     with open(path) as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         next(reader)
         for row in reader:
-            create_item_from_row(row)
+            create_item_from_row(row, gc)
 
 
 if __name__ == '__main__':
-    create_items_from_csv('./jgi_data/NMDC_metadata_datasets - NMDC_datasets_metadata.csv')
+    if len(sys.argv) < 5:
+        sys.exit('Sample call: python ingest.py ./data localhost 8080 admin letmein')
+    data_dir = sys.argv[1]
+    host = sys.argv[2]
+    port = sys.argv[3]
+    user = sys.argv[4]
+    password = sys.argv[5]
+    gc = GirderClient(apiUrl='http://{}:{}/api/v1'.format(host, port))
+    gc.authenticate(user, password)
+    create_items_from_csv('./jgi_data/NMDC_metadata_datasets - NMDC_datasets_metadata.csv', gc)
     # with open("envo_lookup.json", "w") as f:
     #     f.write(json.dumps(lookup_table))
