@@ -59,22 +59,33 @@ function treeSum(arr) {
 export default {
   name: "Sunburst",
   props: {
-    filteredTables: {
+    filter: {
       type: Object,
-      required: true
-    },
-    cmap: {
-      required: true
+      required: false
     }
+    // filteredTables: {
+    //   type: Object,
+    //   required: true
+    // },
+    // cmap: {
+    //   required: true
+    // }
   },
+  inject: ["girderRest"],
+  data: () => ({
+    initialized: false
+  }),
   computed: {
-    treeData() {
-      return this.filteredTables.table8.map(treeifyTable8);
-    },
     treeDataSum() {
+      if (!this.treeData) {
+        return null;
+      }
       return treeSum(this.treeData);
     },
     sunburstData() {
+      if (!this.treeDataSum) {
+        return null;
+      }
       const data = this.treeDataSum;
 
       return {
@@ -88,29 +99,46 @@ export default {
         }))
       };
     },
-    testData() {
-      return {
-        name: "root",
-        children: [
-          {
-            name: "A",
-            value: 3
-          },
-          {
-            name: "B",
-            value: 4
-          }
-        ]
+    sc10: d3.scale.category10,
+    cmap() {
+      return v => {
+        if (v === "") {
+          return "#ffffff";
+        }
+        return this.sc10(v);
       };
+    }
+  },
+  asyncComputed: {
+    async treeData() {
+      var { data: records } = await this.girderRest.get("record/filtered", {
+        params: {
+          fields: JSON.stringify(["table8"]),
+          filter: this.filter
+        }
+      });
+      return records.data
+        .map(record => record.table8)
+        .filter(d => d)
+        .map(treeifyTable8);
     }
   },
   watch: {
     sunburstData(data) {
-      this.debouncedUpdate(data);
+      if (data) {
+        if (!this.initialized) {
+          this.initialize();
+        } else {
+          this.debouncedUpdate(data);
+        }
+      }
     }
   },
-  mounted() {
-    this.$nextTick(() => {
+  // mounted() {
+  //   this.$nextTick(() => {});
+  // },
+  methods: {
+    initialize() {
       this.chart = Sunburst()
         .width(this.$el.offsetWidth)
         .height(this.$el.offsetHeight)
@@ -137,9 +165,8 @@ export default {
       this.update(this.sunburstData);
 
       this.chart(this.$el);
-    });
-  },
-  methods: {
+      this.initialized = true;
+    },
     update(data) {
       this.chart.data(data);
     }
@@ -154,6 +181,7 @@ export default {
 <style>
 .eco-sunburst {
   flex: 1;
+  padding: 5px;
 }
 
 textPath.text-contour {

@@ -4,6 +4,7 @@ import Router from "vue-router";
 import girder from "./girder";
 import Login from "@/views/Login.vue";
 import Landing from "@/views/Landing.vue";
+import Data from "@/views/Data.vue";
 
 Vue.use(Router);
 
@@ -26,6 +27,12 @@ export default new Router({
       path: "/",
       name: "Landing",
       component: Landing,
+      beforeEnter
+    },
+    {
+      path: "/data",
+      name: "Data",
+      component: Data,
       beforeEnter
     }
   ]

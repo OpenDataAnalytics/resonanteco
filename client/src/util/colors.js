@@ -24,8 +24,13 @@ var colormap = {
       "freshwater lake",
       "epilimnion"
     ],
-    interpolateOranges: ["grassland biome", "farm", "sphagnum bog", "watershed"],
-    interpolateRdPu:["microbial mat"]
+    interpolateOranges: [
+      "grassland biome",
+      "farm",
+      "sphagnum bog",
+      "watershed"
+    ],
+    interpolateRdPu: ["microbial mat"]
   },
   material: {
     interpolateBlues: [
@@ -36,7 +41,7 @@ var colormap = {
       "hypersaline water"
     ],
     interpolateOranges: ["soil", "grassland soil", "farm soil"],
-    interpolateRdPu:["microbial mat material"]
+    interpolateRdPu: ["microbial mat material"]
   },
   biome: {
     interpolateBlues: [

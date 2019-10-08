@@ -7,6 +7,8 @@ from girder.models.collection import Collection
 from girder.models.folder import Folder
 from girder.models.item import Item
 
+from .util import getMatchConditions
+
 
 class Meta(Resource):
     def __init__(self):
@@ -14,7 +16,8 @@ class Meta(Resource):
         self.resourceName = 'meta'
 
         self.route('GET', (), self.getMeta)
-        self.route('GET', ('feature_vs_material',), self.feature_vs_material)
+        self.route('GET', ('feature_vs_material',), self.feature_vs_material),
+        self.route('GET', ('distinct',), self.distinct)
 
     @access.user
     @autoDescribeRoute(
@@ -124,29 +127,13 @@ class Meta(Resource):
             }
         ]))
 
-
-def getMatchConditions(filter):
-
-    matches = [{
-        "$match": {
-            "meta.meta": {
-                "$exists": 1
-            }
+    @access.user
+    @autoDescribeRoute(
+        Description('')
+        .errorResponse())
+    def distinct(self, params):
+        return {
+            "feature": Item().collection.distinct('meta.meta.feature'),
+            "material": Item().collection.distinct('meta.meta.material'),
+            "biome": Item().collection.distinct('meta.meta.biome')
         }
-    }]
-    if filter:
-        conditions = {}
-        for key in filter:
-            if isinstance(filter[key], list):
-                conditions['meta.meta.'+key] = {"$in": filter[key]}
-            if 'selectedRegion' in filter:
-                coordinates = filter['selectedRegion']['coordinates'][0]
-                print(coordinates)
-                conditions['meta.meta.longitude'] = {
-                    "$gt": coordinates[0][0], "$lt": coordinates[2][0]}
-                conditions['meta.meta.latitude'] = {
-                    "$gt": coordinates[0][1], "$lt": coordinates[1][1]}
-        matches.append({
-            "$match": conditions
-        })
-    return matches

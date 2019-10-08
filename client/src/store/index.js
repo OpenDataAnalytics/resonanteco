@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import girder from "@/girder";
+// import girder from "@/girder";
 
 Vue.use(Vuex);
 

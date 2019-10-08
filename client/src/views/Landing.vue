@@ -7,6 +7,8 @@ import SamplesLocation from "@/components/SamplesLocation";
 import BiomeTreemap from "@/components/BiomeTreemap";
 import FeatureVsMaterialChart from "@/components/FeatureVsMaterialChart";
 
+import { calculateFilter } from "./utils";
+
 export default {
   name: "Landing",
   components: {
@@ -17,10 +19,6 @@ export default {
     FeatureVsMaterialChart
   },
   data: () => ({
-    // selectedBiomes: [],
-    // selectedFeatures: [],
-    // selectedMaterials: [],
-    // selectedRegion: null,
     filter: null,
     conditionChanged: false
   }),
@@ -89,27 +87,8 @@ export default {
       "setSelectedMaterials",
       "setSelectedRegion"
     ]),
-    calculateFilter() {
-      var filter = {};
-      if (this.selectedBiomes.length) {
-        filter["biome"] = this.selectedBiomes;
-      }
-      if (this.selectedFeatures.length) {
-        filter["feature"] = this.selectedFeatures;
-      }
-      if (this.selectedMaterials.length) {
-        filter["material"] = this.selectedMaterials;
-      }
-      if (this.selectedRegion) {
-        filter.selectedRegion = this.selectedRegion.geometry;
-      }
-      if (Object.keys(filter).length !== 0) {
-        return filter;
-      }
-      return null;
-    },
     search() {
-      this.filter = this.calculateFilter();
+      this.filter = calculateFilter(this);
       this.conditionChanged = false;
     },
     clear() {

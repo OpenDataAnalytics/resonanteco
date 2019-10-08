@@ -107,12 +107,13 @@ export default {
       attribution="© OpenStreetMap contributors, © CARTO"
       :zIndex="0"
     />
-    <GeojsGeojsonLayer 
-      :zIndex="1" 
+    <GeojsGeojsonLayer
+      :zIndex="1"
       :geojson="sitesFeature"
       :featureStyle="{
-        point: {stroke: false }
-      }" />
+        point: { stroke: false }
+      }"
+    />
     <GeojsGeojsonLayer
       :zIndex="2"
       :geojson="selectedRegion"
