@@ -1,0 +1,38 @@
+---
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo_db:/data/db
+
+  girder:
+    build:
+      context: ../
+      dockerfile: docker/girder.Dockerfile
+    volumes:
+      - girder_assetstore:/home/assetstore
+    depends_on:
+      - mongo
+    ports:
+      - "9000:8080"
+
+  nginx:
+    build:
+      context: ../
+      dockerfile: docker/nginx.Dockerfile
+    depends_on:
+      - girder
+    ports:
+      - "9001:80"
+
+  provision:
+    build:
+      context: ../
+      dockerfile: docker/provision.Dockerfile
+    depends_on:
+      - nginx
+
+volumes:
+  mongo_db:
+  girder_assetstore:

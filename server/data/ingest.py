@@ -3,14 +3,10 @@ from os.path import isfile, join
 from os import listdir
 import re
 import sys
-
-from girder.models.user import User
-from girder.models.collection import Collection
-from girder.models.folder import Folder
-from girder.models.item import Item
+from girder_client import GirderClient
 
 
-def ingest(directory):
+def ingest(directory, gc):
     table7Dict = {}
     table8Dict = {}
     table9Dict = {}
@@ -29,14 +25,12 @@ def ingest(directory):
             table9 = parseTable(directory, filename)
             table9Dict[table9['taxon_oid']] = table9
 
-    admin = User().findOne({"admin": True})
     datasetsFolder = findDatasetFolder()
     for taxon_oid in metaDict:
         data = {"meta_": metaDict[taxon_oid], "summary": summaryDict[taxon_oid],
                 "table7": table7Dict[taxon_oid], "table8": table8Dict[taxon_oid], "table9": table9Dict[taxon_oid]}
         data['meta'] = extractMeta(data)
-        item = Item().createItem(taxon_oid, admin, datasetsFolder)
-        Item().setMetadata(item, data)
+        gc.loadOrCreateItem(taxon_oid, datasetsFolder['_id'], metadata=data)
 
 
 def parseCSV(directory, filename):
@@ -98,12 +92,19 @@ def extractMeta(data):
 
 
 def findDatasetFolder():
-    collection = Collection().findOne({"name": 'ResonantEco'})
-    datasets = Folder().findOne({"name": "datasets", "parentId": collection['_id']})
-    return Folder().findOne({"name": "LLNL", "parentId": datasets['_id']})
+    collection = gc.resourceLookup('/collection/ResonantEco')
+    datasets = gc.resourceLookup('/collection/ResonantEco/datasets')
+    return gc.resourceLookup('/collection/ResonantEco/datasets/LLNL')
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        sys.exit('Missing argument')
-    ingest(sys.argv[1])
+    if len(sys.argv) < 5:
+        sys.exit('Sample call: python ingest.py ./data localhost 8080 admin letmein')
+    data_dir = sys.argv[1]
+    host = sys.argv[2]
+    port = sys.argv[3]
+    user = sys.argv[4]
+    password = sys.argv[5]
+    gc = GirderClient(apiUrl='http://{}:{}/api/v1'.format(host, port))
+    gc.authenticate(user, password)
+    ingest(data_dir, gc)
