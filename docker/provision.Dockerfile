@@ -6,6 +6,4 @@ WORKDIR /home
 
 COPY docker/provision provision
 
-COPY server/data data
-
 ENTRYPOINT ["/home/provision/provision_entrypoint.sh"]
