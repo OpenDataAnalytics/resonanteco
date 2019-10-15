@@ -2,24 +2,31 @@
 import { mapState, mapMutations } from "vuex";
 
 import NavigationBar from "@/components/NavigationBar";
-import Sunburst from "@/components/Sunburst";
+import SamplesLocation from "@/components/SamplesLocation";
+import DataInsight from "@/components/DataInsight";
+import AddFilter from "@/components/AddFilter";
 import { calculateFilter } from "./utils";
+import additionalFilterProperties from "@/components/additionalFilterProperties";
 
 export default {
   name: "Data",
   components: {
     NavigationBar,
-    Sunburst
+    DataInsight,
+    SamplesLocation,
+    AddFilter
   },
   inject: ["girderRest"],
   data: function() {
     return {
       self: this,
-      alphaDiversityRange: [null, null],
+      additionalFilterProperties,
+      additionalFilters: {},
       options: {
         itemsPerPage: 10,
         page: 1
-      }
+      },
+      addFilterDialog: false
     };
   },
   computed: {
@@ -29,6 +36,14 @@ export default {
       "selectedMaterials",
       "selectedRegion"
     ]),
+    selectedRegion_: {
+      get() {
+        return this.selectedRegion;
+      },
+      set(values) {
+        this.setSelectedRegion(values);
+      }
+    },
     selectedBiomes_: {
       get() {
         return this.selectedBiomes;
@@ -55,13 +70,7 @@ export default {
     },
     filter() {
       var filter = calculateFilter(this);
-      if (this.alphaDiversityRange[0] && this.alphaDiversityRange[1]) {
-        filter["table7.Alpha Diversity"] = {
-          $gt: this.alphaDiversityRange[0],
-          $lt: this.alphaDiversityRange[1]
-        };
-      }
-      return filter;
+      return { ...filter, ...this.additionalFilters };
     }
   },
   asyncComputed: {
@@ -91,17 +100,41 @@ export default {
     ]),
     capitalizeFirstLetter(value) {
       return value.charAt(0).toUpperCase() + value.slice(1);
+    },
+    addFilter(filter) {
+      this.additionalFilters = { ...this.additionalFilters, ...filter };
+      this.addFilterDialog = false;
+    },
+    removeAdditionalFilter(property) {
+      this.$delete(this.additionalFilters, property);
     }
   }
 };
 </script>
 
 <template>
-  <v-content>
+  <v-content class="data">
     <NavigationBar />
     <v-navigation-drawer app permanent dark width="300">
-      <v-subheader>Filters</v-subheader>
+      <v-subheader
+        >Filters<v-spacer /><v-btn
+          outlined
+          small
+          @click="addFilterDialog = true"
+          :filter="filter"
+          >Add</v-btn
+        ></v-subheader
+      >
       <v-expansion-panels accordion>
+        <v-expansion-panel>
+          <v-expansion-panel-header>Location</v-expansion-panel-header>
+          <v-expansion-panel-content class="sample-location-container">
+            <SamplesLocation
+              :filter="filter"
+              :selectedRegion.sync="selectedRegion_"
+            />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
         <v-expansion-panel
           v-for="(values, category) in this.distinct"
           :key="category"
@@ -115,7 +148,10 @@ export default {
                 "
                 class="panel-header-caption grey--text"
               >
-                {{self[`selected${capitalizeFirstLetter(category)}s_`].length}} selected
+                {{
+                  self[`selected${capitalizeFirstLetter(category)}s_`].length
+                }}
+                selected
               </div>
             </div>
           </v-expansion-panel-header>
@@ -127,30 +163,38 @@ export default {
               v-for="item in values"
               :key="item"
               v-model="self[`selected${capitalizeFirstLetter(category)}s_`]"
-              :label="item"
+              :label="String(item)"
               :value="item"
             ></v-checkbox>
           </v-expansion-panel-content>
         </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-header>Properties</v-expansion-panel-header>
+        <v-expansion-panel
+          v-for="(value, property) in additionalFilters"
+          :key="property"
+        >
+          <v-expansion-panel-header
+            >{{
+              additionalFilterProperties.find(
+                ({ value, text }) => value === property
+              ).text
+            }}<v-spacer /><v-btn
+              text
+              icon
+              x-small
+              class="flex-grow-0"
+              @click.stop="removeAdditionalFilter(property)"
+              ><v-icon>mdi-close</v-icon></v-btn
+            ></v-expansion-panel-header
+          >
           <v-expansion-panel-content>
-            <v-range-slider
-              class="two-line"
-              :value="alphaDiversityRange"
-              @change="alphaDiversityRange = $event"
-              :max="11032"
-              :min="6982"
-              label="Alpha diversity"
-              hide-details
-            />
+            {{ value.$gt }} ~ {{ value.$lt }}
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
     </v-navigation-drawer>
     <div class="d-flex flex-column fill-height parent" no-gutters>
-      <div class="children d-flex" style="flex-grow:1;">
-        <Sunburst :filter="filter" />
+      <div class="children" style="flex-grow:1;">
+        <DataInsight :filter="filter" />
       </div>
       <div class="children table-container" style="flex-grow:2;min-height:0;">
         <v-data-table
@@ -168,6 +212,9 @@ export default {
         </v-data-table>
       </div>
     </div>
+    <v-dialog v-model="addFilterDialog" max-width="1200">
+      <AddFilter :visible="addFilterDialog" :filter="filter" @add="addFilter" />
+    </v-dialog>
   </v-content>
 </template>
 
@@ -178,6 +225,13 @@ export default {
 
 .flex-column > [class*="col-"] {
   max-width: unset;
+}
+
+.data .sample-location-container {
+  .v-expansion-panel-content__wrap {
+    padding: 0;
+    height: 200px;
+  }
 }
 </style>
 

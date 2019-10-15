@@ -180,7 +180,7 @@ export default {
 
 <style>
 .eco-sunburst {
-  flex: 1;
+  height: 100%;
   padding: 5px;
 }
 

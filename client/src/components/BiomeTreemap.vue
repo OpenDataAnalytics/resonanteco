@@ -157,10 +157,11 @@ export default {
               if (d.y1 - d.y0 < 14) {
                 return;
               }
-              if (d.x1 - d.x0 < d.data.name.length * 10) {
+              var name = d.data.name.replace(" biome", "");
+              if (d.x1 - d.x0 < name.length * 10) {
                 return;
               }
-              return d.data.name;
+              return name;
             });
             leaves.select(".leaf-value").text(d => d.data.value);
           },

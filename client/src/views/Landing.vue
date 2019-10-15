@@ -80,6 +80,9 @@ export default {
       this.conditionChanged = true;
     }
   },
+  created() {
+    this.filter = calculateFilter(this);
+  },
   methods: {
     ...mapMutations([
       "setSelectedBiomes",
@@ -140,16 +143,27 @@ export default {
             <v-icon left>mdi-magnify</v-icon>
             Search
           </v-btn>
-          <v-btn
-            v-if="filter && (!conditionChanged || !conditions)"
-            light
-            small
-            min-height="30"
-            @click="clear"
-          >
-            <v-icon left>mdi-delete</v-icon>
-            Clear
-          </v-btn>
+          <template v-if="filter && (!conditionChanged || !conditions)">
+            <v-btn
+              v-if="filter && (!conditionChanged || !conditions)"
+              light
+              small
+              min-height="30"
+              @click="clear"
+            >
+              <v-icon left>mdi-delete</v-icon>
+              Clear
+            </v-btn>
+            <v-btn
+              class="ml-2"
+              light
+              small
+              min-height="30"
+              to="/data">
+              Go to Data
+              <v-icon right>mdi-arrow-right-bold</v-icon>
+            </v-btn>
+          </template>
         </v-toolbar>
       </v-col>
       <v-col

@@ -18,6 +18,7 @@ class Meta(Resource):
         self.route('GET', (), self.getMeta)
         self.route('GET', ('feature_vs_material',), self.feature_vs_material),
         self.route('GET', ('distinct',), self.distinct)
+        self.route('GET', ('field_meta',), self.getFieldMeta)
 
     @access.user
     @autoDescribeRoute(
@@ -137,3 +138,21 @@ class Meta(Resource):
             "material": Item().collection.distinct('meta.meta.material'),
             "biome": Item().collection.distinct('meta.meta.biome')
         }
+
+    @access.user
+    @autoDescribeRoute(
+        Description('')
+        .param('field', '', required=True)
+        .errorResponse())
+    def getFieldMeta(self, field, params):
+        fieldType = list(Item().collection.aggregate([{'$match': {'meta.'+field: {'$exists': 1}}}, {
+            '$limit': 1}, {'$project': {'fieldType': {'$type': "$meta."+field}}}]))[0]['fieldType']
+        if fieldType in ['double', 'int', 'decimal']:
+            minmax = list(Item().collection.aggregate([{'$match': {'meta.'+field: {'$exists': 1}}}, {
+                          '$group': {'_id': None, 'max': {'$max': '$meta.'+field}, 'min': {'$min': '$meta.'+field}}}]))[0]
+            return {
+                'type': fieldType,
+                'min': minmax['min'],
+                'max': minmax['max'],
+            }
+        return None
