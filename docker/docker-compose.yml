@@ -17,21 +17,12 @@ services:
     ports:
       - "9000:8080"
 
-  nginx:
-    build:
-      context: ../
-      dockerfile: docker/nginx.Dockerfile
-    depends_on:
-      - girder
-    ports:
-      - "9001:80"
-
   provision:
     build:
       context: ../
       dockerfile: docker/provision.Dockerfile
     depends_on:
-      - nginx
+      - girder
 
 volumes:
   mongo_db:

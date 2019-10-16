@@ -59,12 +59,11 @@ def run_girder_init(apiUrl):
     createInitialUser(apiUrl)
     gc = girder_client.GirderClient(apiUrl=apiUrl)
     gc.authenticate("admin", "letmein")
-    setGirderSetting("core.cors.allow_origin", "http://localhost:8080, http://localhost:9001", gc)
     createAssetstore(gc)
     createIngestFolders(gc)
 
 if __name__ == '__main__':
-    GIRDER_INNER_HOST = 'girder'
+    GIRDER_INNER_HOST = 'app-girder'
     GIRDER_INNER_PORT = os.environ.get('GIRDER_INNER_PORT', 8080)
     if not GIRDER_INNER_PORT:
         raise RuntimeError('You must set the env variable GIRDER_INNER_PORT')
