@@ -1,0 +1,39 @@
+---
+version: '2'
+volumes:
+  db.resonanteco:
+    driver: rancher-nfs
+    external: true
+  app.resonanteco:
+    driver: rancher-nfs
+    external: true
+
+services:
+  db-mongo:
+    image: mongo:latest
+    volumes:
+      - db.resonanteco:/data/db
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+
+  app-girder:
+    image: registry.spin.nersc.gov/dozturk/resonanteco_girder:deploy_2
+    volumes:
+      - app.resonanteco:/home/assetstore
+    depends_on:
+      - db-mongo
+    cap_drop:
+      - ALL
+    ports:
+      - "8080:8080"
+
+  util-provision:
+    image: registry.spin.nersc.gov/dozturk/resonanteco_provision:deploy
+    depends_on:
+      - app-girder
+    cap_drop:
+      - ALL
