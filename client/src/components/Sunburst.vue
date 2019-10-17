@@ -178,10 +178,14 @@ export default {
   <div class="eco-sunburst" />
 </template>
 
-<style>
+<style lang="scss">
 .eco-sunburst {
-  height: 100%;
+  height: calc(100% - 10px);
   padding: 5px;
+
+  > div:first-child svg {
+    display: block;
+  }
 }
 
 textPath.text-contour {

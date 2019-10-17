@@ -1,5 +1,6 @@
 <script>
 import { mapState, mapMutations } from "vuex";
+import { isEmpty } from "lodash";
 
 import NavigationBar from "@/components/NavigationBar";
 import WidgetContainer from "@/components/WidgetContainer";
@@ -84,6 +85,7 @@ export default {
     this.filter = calculateFilter(this);
   },
   methods: {
+    isEmpty,
     ...mapMutations([
       "setSelectedBiomes",
       "setSelectedFeatures",
@@ -134,7 +136,10 @@ export default {
             </template>
           </div>
           <v-btn
-            v-if="(conditionChanged && conditions) || (!conditions && !filter)"
+            v-if="
+              (conditionChanged && conditions) ||
+                (!conditions && isEmpty(filter))
+            "
             light
             small
             min-height="30"
@@ -143,23 +148,14 @@ export default {
             <v-icon left>mdi-magnify</v-icon>
             Search
           </v-btn>
-          <template v-if="filter && (!conditionChanged || !conditions)">
-            <v-btn
-              v-if="filter && (!conditionChanged || !conditions)"
-              light
-              small
-              min-height="30"
-              @click="clear"
-            >
+          <template
+            v-if="!isEmpty(filter) && (!conditionChanged || !conditions)"
+          >
+            <v-btn light small min-height="30" @click="clear">
               <v-icon left>mdi-delete</v-icon>
               Clear
             </v-btn>
-            <v-btn
-              class="ml-2"
-              light
-              small
-              min-height="30"
-              to="/data">
+            <v-btn class="ml-2" light small min-height="30" to="/data">
               Go to Data
               <v-icon right>mdi-arrow-right-bold</v-icon>
             </v-btn>

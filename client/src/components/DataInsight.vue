@@ -55,12 +55,9 @@ export default {
       v-model="selectedField"
       hide-details
     ></v-select>
-    <Sunburst :filter="filter" v-if="selectedField==='table8'" />
+    <Sunburst :filter="filter" v-if="selectedField === 'table8'" />
     <div class="chart-container" v-else>
-    <NumericChart
-      v-if="records"
-      :records="records"
-    />
+      <NumericChart v-if="records" :records="records" />
     </div>
   </div>
 </template>
@@ -79,7 +76,7 @@ export default {
   .chart-container {
     height: 100%;
     padding: 5px;
-    padding-top:30px;
+    padding-top: 30px;
   }
 }
 </style>
