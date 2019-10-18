@@ -1,4 +1,6 @@
 <script>
+import * as d3 from "d3";
+
 import Sunburst from "sunburst-chart";
 import debounce from "lodash.debounce";
 
@@ -99,7 +101,9 @@ export default {
         }))
       };
     },
-    sc10: d3.scale.category10,
+    sc10() {
+      return d3.scaleOrdinal().range(d3.schemeCategory10);
+    },
     cmap() {
       return v => {
         if (v === "") {

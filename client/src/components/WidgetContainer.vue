@@ -1,6 +1,6 @@
 <template functional>
-  <div class="widget-container">
-    <div class="grey darken-2 white--text body-2 pl-2">
+  <div class="widget-container" :class="data.staticClass || ''">
+    <div class="grey darken-2 white--text body-1 pl-2">
       <slot name="title"></slot>
     </div>
     <div class="widget flex-grow-1">

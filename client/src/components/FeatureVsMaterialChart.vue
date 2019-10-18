@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     initialize() {
-      var margin = { top: 70, right: 40, bottom: 70, left: 40 };
+      var margin = { top: 80, right: 45, bottom: 80, left: 45 };
       var width = this.$el.clientWidth - margin.left - margin.right;
       this.width = width;
       var height = this.$el.clientHeight - margin.top - margin.bottom;
@@ -122,10 +122,10 @@ export default {
         .text(d => records[d].feature);
       topAxisGroup
         .append("text")
+        .attr("class", "axis-label")
         .attr("fill", "#000")
         .attr("x", 20)
-        .attr("y", -15)
-        .attr("text-anchor", "end")
+        .attr("y", -20)
         .text("Feature");
 
       var bottomAxisGroup = svg
@@ -161,22 +161,22 @@ export default {
         .text(d => records[d].material);
       bottomAxisGroup
         .append("text")
+        .attr("class", "axis-label")
         .attr("fill", "#000")
         .attr("x", 20)
-        .attr("y", 20)
-        .attr("text-anchor", "end")
+        .attr("y", 25)
         .text("Material");
 
       svg
         .append("g")
         .call(d3.axisLeft(y))
         .append("text")
+        .attr("class", "axis-label")
         .attr("fill", "#000")
         .attr("transform", "rotate(-90)")
-        .attr("y", -25)
-        .attr("x", 10)
+        .attr("y", -35)
+        .attr("x", 15)
         .attr("dy", "0.71em")
-        .attr("text-anchor", "end")
         .text("Count");
 
       var barContainer = svg
@@ -300,11 +300,17 @@ export default {
 
   .tick-label {
     cursor: pointer;
+    font-size: 12px;
 
     &.selected {
       font-weight: bolder;
       text-decoration: underline;
     }
+  }
+
+  .axis-label {
+    text-anchor: end;
+    font-size: 12px;
   }
 }
 </style>

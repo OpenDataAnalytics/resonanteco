@@ -124,7 +124,7 @@ export default {
               .append("div")
               .attr("class", "leaf-title")
               .text(d => {
-                if (d.y1 - d.y0 < 14) {
+                if (d.y1 - d.y0 < 30) {
                   return;
                 }
                 var name = d.data.name.replace(" biome", "");
@@ -137,7 +137,10 @@ export default {
             leaves
               .append("div")
               .attr("class", "leaf-value")
-              .text(d => d.data.value);
+              .text(d => {
+                if (d.y1 - d.y0 < 30) return;
+                return d.data.value;
+              });
           },
           update => {
             var leaves = update
@@ -154,7 +157,7 @@ export default {
               .style("background-color", d => mapColor("biome", d.data.name));
 
             leaves.select(".leaf-title").text(d => {
-              if (d.y1 - d.y0 < 14) {
+              if (d.y1 - d.y0 < 30) {
                 return;
               }
               var name = d.data.name.replace(" biome", "");
@@ -163,7 +166,10 @@ export default {
               }
               return name;
             });
-            leaves.select(".leaf-value").text(d => d.data.value);
+            leaves.select(".leaf-value").text(d => {
+              if (d.y1 - d.y0 < 30) return;
+              return d.data.value;
+            });
           },
           remove => {
             remove

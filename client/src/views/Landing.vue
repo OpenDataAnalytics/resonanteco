@@ -79,6 +79,9 @@ export default {
   watch: {
     conditions() {
       this.conditionChanged = true;
+    },
+    selectedRegion_() {
+      this.conditionChanged = true;
     }
   },
   created() {
@@ -136,17 +139,14 @@ export default {
             </template>
           </div>
           <v-btn
-            v-if="
-              (conditionChanged && conditions) ||
-                (!conditions && isEmpty(filter))
-            "
+            v-if="conditionChanged && (selectedRegion || conditions)"
             light
             small
             min-height="30"
             @click="search"
           >
             <v-icon left>mdi-magnify</v-icon>
-            Search
+            Apply
           </v-btn>
           <template
             v-if="!isEmpty(filter) && (!conditionChanged || !conditions)"
@@ -167,7 +167,7 @@ export default {
           <v-col>
             <v-row no-gutters class="flex-column fill-height">
               <v-col>
-                <WidgetContainer>
+                <WidgetContainer class="pb-3">
                   <template #title>
                     Locations
                   </template>

@@ -15,6 +15,10 @@ export default {
     min: {
       type: Number,
       default: null
+    },
+    rangeSelection: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({ sort: false }),
@@ -41,7 +45,6 @@ export default {
   methods: {
     initialize() {
       var margin = { top: 20, right: 30, bottom: 20, left: 60 };
-      var { records } = this;
       var width = this.$el.clientWidth - margin.left - margin.right;
       this.width = width;
       var height = this.$el.clientHeight - margin.top - margin.bottom;
@@ -58,6 +61,88 @@ export default {
 
       this.svg = svg;
 
+      var tooltip = d3
+        .select(this.$el)
+        .append("div")
+        .attr("class", "tooltip")
+        .style("display", "none");
+
+      var workRegion = svg.append("g");
+      this.workRegion = workRegion;
+
+      var barContainer = workRegion.append("g");
+      this.barContainer = barContainer;
+
+      var rangeOverlay = workRegion
+        .append("rect")
+        .attr("class", "range-overlay");
+
+      workRegion
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "transparent");
+
+      workRegion.on("mousemove", () => {
+        var { offsetX, offsetY } = d3.event;
+        var value = y.invert(offsetY - margin.top);
+        tooltip
+          .style("left", offsetX + 18 + "px")
+          .style("top", offsetY + "px")
+          .text(y.tickFormat()(value))
+          .style("display", "block");
+
+        if (dragging) {
+          rangeOverlay.style("visibility", "visible");
+          var value2 = y.invert(dragStartPosition[1] - margin.top);
+          rangeSelection = [Math.min(value, value2), Math.max(value, value2)];
+          var start = [
+            Math.min(dragStartPosition[0], offsetX),
+            Math.min(dragStartPosition[1], offsetY)
+          ];
+          rangeOverlay
+            .attr("x", 0)
+            .attr("width", width)
+            .attr("y", start[1] - margin.top)
+            .attr("height", Math.abs(offsetY - dragStartPosition[1]));
+        }
+      });
+
+      workRegion.on("mouseleave", () => {
+        tooltip.style("display", "none");
+      });
+
+      var dragging = false;
+      var dragStartPosition = null;
+      var rangeSelection = null;
+      workRegion.on("mousedown", () => {
+        if (!this.rangeSelection) {
+          return;
+        }
+        var e = d3.event;
+        var { offsetX, offsetY } = e;
+        e.preventDefault();
+        dragStartPosition = [offsetX, offsetY];
+        dragging = true;
+      });
+
+      workRegion.on("mouseup", () => {
+        if (!dragging) {
+          return;
+        }
+        var e = d3.event;
+        d3.event.preventDefault();
+        rangeOverlay.style("visibility", "hidden");
+        dragging = false;
+        if (e.which === 1) {
+          this.$emit("range-selected", rangeSelection);
+        }
+      });
+
+      workRegion.on("contextmenu", () => {
+        d3.event.preventDefault();
+      });
+
       var x = d3
         .scaleBand()
         .range([0, width])
@@ -65,40 +150,51 @@ export default {
       this.x = x;
 
       var y = d3.scaleLinear().rangeRound([height, 0]);
+      // y.tickFormat(d3.format(".3n"));
+      y.tickFormat(".3n");
+      // console.log(y.tickFormat());
       this.y = y;
     },
     update() {
       var { records_: records, svg, x, y, height, width } = this;
+      var min = this.min ? this.min : d3.min(records, record => record.value);
+      var max = this.max ? this.max : d3.max(records, record => record.value);
       x.domain(records.map(record => record._id));
-      y.domain([
-        this.min ? this.min : d3.min(records, record => record.value),
-        this.max ? this.max : d3.max(records, record => record.value)
-      ]);
+      y.domain([min, max + (max - min) / 10]);
 
       svg.selectAll(".axes").remove();
 
-      var xAxis = svg
+      svg
         .append("g")
         .attr("class", "axes")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x).tickValues([]))
         .append("text")
+        .attr("class", "axis-label")
         .attr("fill", "#000")
         .attr("x", width)
         .attr("y", 20)
         .text("Records");
 
+      var formatter = value => {
+        return d3
+          .format(".3n")(value)
+          .replace("+", "")
+          .replace("e", "E");
+      };
+
       svg
         .append("g")
         .attr("class", "axes")
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(y).tickFormat(formatter))
         .append("text")
+        .attr("class", "axis-label")
         .attr("fill", "#000")
         .attr("y", -10)
         .attr("x", 10)
         .text("Value");
 
-      svg
+      this.barContainer
         .selectAll(".bar")
         .data(records, record => record._id)
         .join(
@@ -154,7 +250,9 @@ export default {
 
 <template>
   <div class="numeric-chart">
-    <div class="sort-button" @click="sort=!sort"><span>{{sort?'unsort':'sort'}}</span></div>
+    <div class="sort-button" @click="sort = !sort">
+      <span>{{ sort ? "unsort" : "sort" }}</span>
+    </div>
   </div>
 </template>
 
@@ -162,12 +260,14 @@ export default {
 .numeric-chart {
   height: 100%;
   position: relative;
+  overflow-x: hidden;
+  overflow-y: hidden;
 
   .sort-button {
     position: absolute;
     font-size: 12px;
-    bottom: -2px;
-    left: 18px;
+    bottom: -4px;
+    left: 13px;
     text-decoration: underline;
     width: 40px;
     text-align: center;
@@ -181,6 +281,29 @@ export default {
   .bar {
     stroke: steelblue;
     fill: steelblue;
+  }
+
+  .axes {
+    .tick text {
+      font-size: 12px;
+    }
+  }
+
+  .axis-label {
+    font-size: 12px;
+  }
+
+  .range-overlay {
+    fill: rgba(255, 166, 0, 0.253);
+  }
+
+  .tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid black;
+    color: black;
+    padding: 0px 5px;
+    font-size: 14px;
   }
 }
 </style>

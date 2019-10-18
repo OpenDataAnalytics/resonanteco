@@ -1,5 +1,5 @@
 <script>
-import _ from "lodash";
+import { isEmpty } from "lodash";
 
 import NumericChart from "@/components/NumericChart";
 import additionalFilterProperties from "./additionalFilterProperties.js";
@@ -20,11 +20,13 @@ export default {
       default: true
     }
   },
-  data: () => ({
-    selectedField: null,
-    valueRange: [],
-    includeFilter: true
-  }),
+  data() {
+    return {
+      selectedField: null,
+      valueRange: [],
+      includeFilter: !isEmpty(this.filter)
+    };
+  },
   computed: {
     fields: () => [{ value: null, text: "" }, ...additionalFilterProperties],
     cleanFilter() {
@@ -100,6 +102,7 @@ export default {
     }
   },
   methods: {
+    isEmpty,
     updateValueRange(value) {
       this.valueRange = value;
     }
@@ -135,15 +138,20 @@ export default {
                 :max="fieldMeta.max"
                 :min="fieldMeta.min"
                 hide-details
-                height="360px"
               />
+              <v-btn
+                text
+                small
+                @click="valueRange = [fieldMeta.min, fieldMeta.max]"
+                >Reset</v-btn
+              >
             </v-col>
             <v-col>
               <NumericChart
                 style="height:400px"
                 :records="records"
-                :max="fieldMeta.max"
-                :min="fieldMeta.min"
+                range-selection
+                @range-selected="updateValueRange"
               />
             </v-col>
           </v-row>
@@ -151,7 +159,8 @@ export default {
             dense
             hide-details
             v-model="includeFilter"
-            label="Include current filters"
+            :disabled="isEmpty(filter)"
+            label="Include other filters"
           ></v-checkbox>
         </div>
       </transition>
@@ -193,9 +202,9 @@ export default {
 
 .v-input__slider.two-line {
   .v-input__slot {
-    height: 360px;
+    height: 350px;
     .v-slider {
-      height: 100%;
+      height: 90%;
     }
   }
 }
