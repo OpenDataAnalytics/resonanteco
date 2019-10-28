@@ -1,3 +1,5 @@
+from statistics import mean, median
+
 from girder.api.rest import Resource, setResponseHeader, setContentDisposition, setRawResponse
 from girder.api import access, rest
 from girder.exceptions import RestException
@@ -147,12 +149,22 @@ class Meta(Resource):
     def getFieldMeta(self, field, params):
         fieldType = list(Item().collection.aggregate([{'$match': {'meta.'+field: {'$exists': 1}}}, {
             '$limit': 1}, {'$project': {'fieldType': {'$type': "$meta."+field}}}]))[0]['fieldType']
+
         if fieldType in ['double', 'int', 'decimal']:
-            minmax = list(Item().collection.aggregate([{'$match': {'meta.'+field: {'$exists': 1}}}, {
-                          '$group': {'_id': None, 'max': {'$max': '$meta.'+field}, 'min': {'$min': '$meta.'+field}}}]))[0]
+            records = list(Item().collection.aggregate([
+                {
+                    '$match': {'meta.'+field: {'$exists': 1}}},
+                {
+                    '$project': {'field': '$meta.'+field}
+                }
+            ]))
+            values = [record['field'] for record in records]
+
             return {
                 'type': fieldType,
-                'min': minmax['min'],
-                'max': minmax['max'],
+                'min': min(values),
+                'max': max(values),
+                'mean': mean(values),
+                'median': median(values)
             }
         return None

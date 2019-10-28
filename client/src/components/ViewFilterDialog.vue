@@ -63,6 +63,7 @@ export default {
               <SamplesLocation
                 v-if="ready"
                 :selectedRegion="obj"
+                read-only
               />
             </div>
           </v-col>

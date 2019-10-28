@@ -14,6 +14,9 @@ export default {
     selectedRegion: {
       type: Object,
       required: false
+    },
+    readOnly:{
+      type:Boolean
     }
   },
   data: () => ({
@@ -126,7 +129,7 @@ export default {
       :geojson.sync="annotationGeojson"
       :editing.sync="editing"
     />
-    <div class="draw">
+    <div v-if="!readOnly" class="draw">
       <v-btn
         fab
         small

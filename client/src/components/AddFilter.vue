@@ -152,6 +152,8 @@ export default {
                 :records="records"
                 range-selection
                 @range-selected="updateValueRange"
+                :mean="fieldMeta.mean"
+                :median="fieldMeta.median"
               />
             </v-col>
           </v-row>

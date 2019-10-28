@@ -19,6 +19,14 @@ export default {
     rangeSelection: {
       type: Boolean,
       default: false
+    },
+    mean: {
+      type: Number,
+      required: false
+    },
+    median: {
+      type: Number,
+      required: false
     }
   },
   data: () => ({ sort: false }),
@@ -29,6 +37,23 @@ export default {
       } else {
         return _.orderBy(this.records, ["value"], ["desc"]);
       }
+    },
+    guidelines() {
+      var lines = [];
+      if (this.mean) {
+        lines.push({
+          name: "Mean",
+          value: this.mean
+        });
+      }
+      if (this.median) {
+        lines.push({
+          name: "Median",
+          value: this.median,
+          strokeDasharray: "6, 2"
+        });
+      }
+      return lines;
     }
   },
   watch: {
@@ -54,6 +79,7 @@ export default {
         .select(this.$el)
         .append("svg")
         .style("display", "block")
+        // .attr("viewBox", `0.5 0.5 ${this.$el.clientWidth} ${this.$el.clientHeight}`)
         .attr("width", this.$el.clientWidth)
         .attr("height", this.$el.clientHeight)
         .append("g")
@@ -84,13 +110,17 @@ export default {
         .attr("fill", "transparent");
 
       workRegion.on("mousemove", () => {
+        clearTimeout(this.tooltipHandle);
         var { offsetX, offsetY } = d3.event;
+        tooltip.style("display", "none");
         var value = y.invert(offsetY - margin.top);
-        tooltip
-          .style("left", offsetX + 18 + "px")
-          .style("top", offsetY + "px")
-          .text(y.tickFormat()(value))
-          .style("display", "block");
+        this.tooltipHandle = setTimeout(() => {
+          tooltip
+            .style("left", offsetX + 18 + "px")
+            .style("top", offsetY + "px")
+            .text(y.tickFormat()(value))
+            .style("display", "block");
+        }, 300);
 
         if (dragging) {
           rangeOverlay.style("visibility", "visible");
@@ -109,6 +139,7 @@ export default {
       });
 
       workRegion.on("mouseleave", () => {
+        clearTimeout(this.tooltipHandle);
         tooltip.style("display", "none");
       });
 
@@ -156,7 +187,7 @@ export default {
       this.y = y;
     },
     update() {
-      var { records_: records, svg, x, y, height, width } = this;
+      var { records_: records, svg, x, y, height, width, mean, median } = this;
       var min = this.min ? this.min : d3.min(records, record => record.value);
       var max = this.max ? this.max : d3.max(records, record => record.value);
       x.domain(records.map(record => record._id));
@@ -243,6 +274,48 @@ export default {
               .remove();
           }
         );
+
+      svg
+        .selectAll(".guideline")
+        .data(this.guidelines)
+        .join(
+          enter => {
+            enter
+              .append("line")
+              .attr("class", "guideline")
+              .attr("x1", 0)
+              .attr("x2", width)
+              .attr("y1", guideline => {
+                return y(guideline.value);
+              })
+              .attr("y2", guideline => {
+                return y(guideline.value);
+              })
+              .attr("stroke-dasharray", guideline => {
+                return guideline.strokeDasharray
+                  ? guideline.strokeDasharray
+                  : null;
+              })
+              .append("title")
+              .text(guideline => guideline.name);
+          },
+          update => {
+            update
+              .transition()
+              .duration(300)
+              .attr("x1", 0)
+              .attr("x2", width)
+              .attr("y1", guideline => {
+                return y(guideline.value);
+              })
+              .attr("y2", guideline => {
+                return y(guideline.value);
+              });
+          },
+          remove => {
+            remove.remove();
+          }
+        );
     }
   }
 };
@@ -295,6 +368,12 @@ export default {
 
   .range-overlay {
     fill: rgba(255, 166, 0, 0.253);
+  }
+
+  .guideline {
+    stroke: red;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
   }
 
   .tooltip {
