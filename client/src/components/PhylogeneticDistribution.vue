@@ -1,5 +1,5 @@
 <script>
-import d3 from "d3";
+import * as d3 from "d3";
 import { GChart } from "vue-google-charts";
 
 export default {
@@ -7,14 +7,19 @@ export default {
   components: {
     GChart
   },
+  inject: ["girderRest"],
   props: {
-    filteredTables: {
+    filter: {
       type: Object,
-      required: true
-    },
-    cmap: {
-      required: true
+      required: false
     }
+    // filteredTables: {
+    //   type: Object,
+    //   required: true
+    // },
+    // cmap: {
+    //   required: true
+    // }
   },
   data() {
     return {
@@ -23,14 +28,18 @@ export default {
   },
   computed: {
     alphaDiversivty() {
-      return this.filteredTables.table7.reduce(
-        (total, values) => values["Alpha Diversity"] + total,
-        0
-      );
+      return null;
+      // return this.filteredTables.table7.reduce(
+      //   (total, values) => values["Alpha Diversity"] + total,
+      //   0
+      // );
     },
     domainAndGroup() {
+      if (!this.tableData) {
+        return null;
+      }
       var grouped = {};
-      this.filteredTables.table8.forEach(table => {
+      this.tableData.forEach(table => {
         Object.entries(table).forEach(([key, value]) => {
           var [category, subCategory] = key.split(":").slice(-2);
           if (!category || !subCategory) {
@@ -61,8 +70,8 @@ export default {
         })
         .filter(({ count }) => count)
         .sort((a, b) => b.count - a.count);
-      var scale = d3.scale
-        .sqrt()
+      var scale = d3
+        .scaleSqrt()
         .domain([
           Math.min(
             ...categoryWithCounts.map(
@@ -82,6 +91,9 @@ export default {
       }));
     },
     sortedTopSelectedDomainChartData() {
+      if (!this.domainAndGroup) {
+        return null;
+      }
       return [
         ["Group", "Count"],
         ...Object.entries(this.domainAndGroup[this.selectedDomain])
@@ -90,17 +102,45 @@ export default {
       ];
     },
     sortedTopSelectedDomainChartColors() {
+      if (!this.sortedTopSelectedDomainChartData) {
+        return null;
+      }
       return this.sortedTopSelectedDomainChartData
         .slice(1)
         .map(d => d[0])
         .map(this.cmap);
     },
     gChartOptions() {
+      if (!this.sortedTopSelectedDomainChartColors) {
+        return null;
+      }
       return {
         chartArea: { width: "95%", height: "95%" },
         legend: { alignment: "center" },
         colors: this.sortedTopSelectedDomainChartColors
       };
+    },
+    sc10() {
+      return d3.scaleOrdinal().range(d3.schemeCategory10);
+    },
+    cmap() {
+      return v => {
+        if (v === "") {
+          return "#ffffff";
+        }
+        return this.sc10(v);
+      };
+    }
+  },
+  asyncComputed: {
+    async tableData() {
+      var { data: records } = await this.girderRest.get("record/filtered", {
+        params: {
+          fields: JSON.stringify(["table8"]),
+          filter: this.filter
+        }
+      });
+      return records.data.map(record => record.table8).filter(d => d);
     }
   },
   methods: {
@@ -112,9 +152,9 @@ export default {
 </script>
 
 <template>
-  <div class="phylogenetic-distribution">
+  <div class="phylogenetic-distribution" v-if="domainAndGroup">
     <h5>Domains</h5>
-    <div class="domain-diversity-container">
+    <div class="domain-diversity-container mx-5">
       <v-tooltip
         top
         v-for="{ category, count, scaledCount } in domain"
@@ -135,10 +175,6 @@ export default {
       </v-tooltip>
     </div>
     <div class="bottom">
-      <h5 class="alpha-diversity-container">
-        Alpha diversity
-        <div style="font-weight:normal;">{{ alphaDiversivty }}</div>
-      </h5>
       <div class="gchart-container">
         <GChart
           style="height: 100%;"
@@ -153,9 +189,10 @@ export default {
 
 <style lang="scss" scoped>
 .phylogenetic-distribution {
-  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  background: white;
 
   .domain-diversity-container {
     display: flex;

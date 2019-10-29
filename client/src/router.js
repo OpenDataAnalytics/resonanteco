@@ -5,6 +5,7 @@ import girder from "./girder";
 import Login from "@/views/Login.vue";
 import Landing from "@/views/Landing.vue";
 import Data from "@/views/Data.vue";
+import Workspace from "@/views/Workspace.vue";
 
 Vue.use(Router);
 
@@ -33,6 +34,12 @@ export default new Router({
       path: "/data",
       name: "Data",
       component: Data,
+      beforeEnter
+    },
+    {
+      path: "/workspace/:workspaceId?",
+      name: "Workspace",
+      component: Workspace,
       beforeEnter
     }
   ]

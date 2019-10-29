@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <v-app-bar app>
+  <v-app-bar app clipped-left>
     <v-toolbar-title>
       <v-tooltip open-delay="2000" bottom>
         <template #activator="{ on }">

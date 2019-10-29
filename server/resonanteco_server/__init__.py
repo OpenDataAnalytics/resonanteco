@@ -2,6 +2,7 @@ from girder import plugin
 
 from .rest.record import Record
 from .rest.meta import Meta
+from .rest.workspace import Workspace
 
 
 class GirderPlugin(plugin.GirderPlugin):
@@ -10,3 +11,4 @@ class GirderPlugin(plugin.GirderPlugin):
     def load(self, info):
         info['apiRoot'].record = Record()
         info['apiRoot'].meta = Meta()
+        info['apiRoot'].workspace = Workspace()

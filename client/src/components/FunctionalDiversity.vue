@@ -1,5 +1,5 @@
 <script>
-import d3 from "d3";
+import * as d3 from "d3";
 import { GChart } from "vue-google-charts";
 
 export default {
@@ -7,16 +7,20 @@ export default {
   components: {
     GChart
   },
+  inject: ["girderRest"],
   props: {
-    filteredTable9: {
-      type: Array,
-      required: true
+    filter: {
+      type: Object,
+      required: false
     }
   },
   computed: {
     chartData() {
+      if (!this.table9Data) {
+        return null;
+      }
       var aggregated = {};
-      this.filteredTable9.forEach(values => {
+      this.table9Data.forEach(values => {
         Object.entries(values)
           .filter(([key]) => key !== "_id" && key !== "taxon_oid")
           .forEach(([key, count]) => {
@@ -26,11 +30,22 @@ export default {
             aggregated[key] += count;
           });
       });
-      var colors = d3.scale.category10().range();
+      var colors = d3.schemeCategory10;
       return [
         ["Function", "Count", { role: "style" }],
         ...Object.entries(aggregated).map((values, i) => [...values, colors[i]])
       ];
+    }
+  },
+  asyncComputed: {
+    async table9Data() {
+      var { data: records } = await this.girderRest.get("record/filtered", {
+        params: {
+          fields: JSON.stringify(["table9"]),
+          filter: this.filter
+        }
+      });
+      return records.data.map(record => record.table9).filter(d => d);
     }
   }
 };
@@ -38,7 +53,8 @@ export default {
 
 <template>
   <GChart
-    style="height: 100%;"
+    v-if="chartData"
+    style="height: 95%;"
     type="BarChart"
     :data="chartData"
     :options="{

@@ -90,7 +90,6 @@ export default {
       return Object.freeze(records);
     }
   },
-  created() {},
   methods: {
     ...mapMutations([
       "setSelectedBiomes",
@@ -107,6 +106,18 @@ export default {
     },
     removeAdditionalFilter(property) {
       this.$delete(this.additionalFilters, property);
+    },
+    async createWorkspace() {
+      var { data: records } = await this.girderRest.get("record/filtered", {
+        params: {
+          fields: JSON.stringify(["1"]),
+          filter: this.filter
+        }
+      });
+      var { data: workspace } = await this.girderRest.post("workspace", {
+        datasets: records.data.map(record => record._id)
+      });
+      this.$router.push(`/workspace/${workspace._id}`);
     }
   }
 };
@@ -115,7 +126,7 @@ export default {
 <template>
   <v-content class="data">
     <NavigationBar />
-    <v-navigation-drawer app permanent dark width="300">
+    <v-navigation-drawer app permanent clipped dark width="300">
       <v-subheader
         >Filters<v-spacer /><v-btn
           outlined
@@ -193,6 +204,18 @@ export default {
       </v-expansion-panels>
     </v-navigation-drawer>
     <div class="d-flex flex-column fill-height parent" no-gutters>
+      <v-toolbar class="flex-grow-0" dense flat dark>
+        <v-spacer />
+        <v-btn
+          light
+          small
+          min-height="30"
+          :disabled="!records || !records.count || records.count > 100"
+          @click="createWorkspace"
+        >
+          Create workspace
+        </v-btn>
+      </v-toolbar>
       <div class="children" style="flex-grow:1;">
         <DataInsight :filter="filter" />
       </div>

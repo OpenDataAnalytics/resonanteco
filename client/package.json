@@ -19,7 +19,7 @@
     "vue-numeral-filter": "^1.1.1",
     "vue-router": "^3.0.3",
     "vue-utilities": "git+https://github.com/Kitware/vue-utilities.git#vuetify-2",
-    "vuetify": "^2.0.0",
+    "vuetify": "^2.1.7",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
