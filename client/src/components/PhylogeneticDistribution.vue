@@ -152,9 +152,9 @@ export default {
 </script>
 
 <template>
-  <div class="phylogenetic-distribution" v-if="domainAndGroup">
+  <div class="phylogenetic-distribution px-3 pt-1" v-if="domainAndGroup">
     <h5>Domains</h5>
-    <div class="domain-diversity-container mx-5">
+    <div class="domain-diversity-container">
       <v-tooltip
         top
         v-for="{ category, count, scaledCount } in domain"

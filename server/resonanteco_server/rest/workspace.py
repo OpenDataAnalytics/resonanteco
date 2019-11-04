@@ -1,6 +1,6 @@
 import datetime
 
-from bson.objectid import ObjectId
+# from bson.objectid import ObjectId
 from girder.api.rest import Resource, setResponseHeader, setContentDisposition, setRawResponse
 from girder.api import access, rest
 from girder.exceptions import RestException
@@ -43,10 +43,10 @@ class Workspace(Resource):
         resonantEcoFolder = Folder().createFolder(private, 'ResonantEco', creator=user, reuseExisting=True)
         workspacesFolder = Folder().createFolder(
             resonantEcoFolder, 'Workspaces', creator=user, reuseExisting=True)
-        id = ObjectId.from_datetime(datetime.datetime.now())
-        workspaceItem = Item().createItem(str(id), user, workspacesFolder)
+        # id = ObjectId.from_datetime(datetime.datetime.now())
+        workspaceItem = Item().createItem(workspace['name'], user, workspacesFolder)
         return Item().setMetadata(workspaceItem, {
-            'resonanteco_workspace': True, 'datasets': workspace['datasets']})
+            'resonanteco_workspace': True, 'datasets': workspace['datasets'], 'filter': workspace['filter']})
 
     @access.user
     @autoDescribeRoute(

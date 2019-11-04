@@ -17,7 +17,7 @@ def getMatchConditions(filter):
             elif isinstance(filter[key], list):
                 conditions['meta.meta.'+key] = {"$in": filter[key]}
             elif key != 'selectedRegion':
-                conditions['meta.'+key] = filter[key]
+                conditions['meta.'+key] = addPrefix(filter[key])
             if 'selectedRegion' in filter:
                 coordinates = filter['selectedRegion']['coordinates'][0]
                 conditions['meta.meta.longitude'] = {
@@ -28,3 +28,16 @@ def getMatchConditions(filter):
             "$match": conditions
         })
     return matches
+
+
+def addPrefix(filterDict):
+    output = {}
+    for key in filterDict:
+        newKey = key
+        if key in ['gt', 'lt']:
+            newKey = '$'+key
+        value = filterDict[key]
+        if type(filterDict[key]) is dict:
+            value = addPrefix(value)
+        output[newKey] = value
+    return output

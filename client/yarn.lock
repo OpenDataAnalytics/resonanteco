@@ -670,6 +670,20 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@girder/components@git+https://github.com/girder/girder_web_components.git":
+  version "2.0.2"
+  resolved "git+https://github.com/girder/girder_web_components.git#709b3368fadeaf8c302af75943d896e1e76c5aa5"
+  dependencies:
+    "@mdi/font" "^3.5.95"
+    axios "^0.18.1"
+    js-cookie "^2.2.0"
+    markdown-it "^8.4.2"
+    moment "^2.24.0"
+    qs "^6.5.2"
+    vue "^2.6.10"
+    vue-async-computed "^3.4.1"
+    vuetify "^2.0.19"
+
 "@girder/components@git+https://github.com/girder/girder_web_components.git#matthew_playground":
   version "1.0.0"
   resolved "git+https://github.com/girder/girder_web_components.git#5788ae8671d17cc5fb0be0fc90c0e2dc46f3568e"
@@ -9256,6 +9270,11 @@ vuetify@^2.0.15:
   version "2.0.18"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.0.18.tgz#f947174cacccc495b67be3607c857e229d020dbc"
   integrity sha512-eXmIJ8kDDS9p/JEcKCzF+YAjL4THvDmyemfmx2j/uB6QRm3HV3rp9lGnEqGNbB/98FqbMUItBUKF9rrpM1wMgg==
+
+vuetify@^2.0.19:
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.1.9.tgz#2c91163090675cde2cd1b6208829ac434d7d8877"
+  integrity sha512-52CgEyPoGYHba5yocYKBB/LXcikoWzj9jCDTH8LlzH/hvjzkgsuEtFwUustGHyV9GstRaNZOrk4nuUWbPZc3kQ==
 
 vuetify@^2.1.7:
   version "2.1.7"

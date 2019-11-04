@@ -4,7 +4,9 @@ import { mapState, mapMutations } from "vuex";
 import NavigationBar from "@/components/NavigationBar";
 import PhylogeneticDistribution from "@/components/PhylogeneticDistribution";
 import FunctionalDiversity from "@/components/FunctionalDiversity";
-// import AddFilter from "@/components/AddFilter";
+
+import JobList from "@girder/components/src/components/Job/JobList";
+import ViewFilterDialog from "@/components/ViewFilterDialog";
 // import { calculateFilter } from "./utils";
 // import additionalFilterProperties from "@/components/additionalFilterProperties";
 
@@ -13,12 +15,15 @@ export default {
   components: {
     NavigationBar,
     PhylogeneticDistribution,
-    FunctionalDiversity
+    FunctionalDiversity,
+    JobList,
+    ViewFilterDialog
   },
   inject: ["girderRest"],
   data: function() {
     return {
       selectedWorkspaceId: null,
+      showViewFilterDialog: false,
       options: {
         itemsPerPage: 15,
         page: 1
@@ -79,9 +84,10 @@ export default {
   },
   watch: {
     selectedWorkspace(workspace) {
-      this.$router.replace(
-        workspace ? `/workspace/${workspace._id}` : "/workspace"
-      );
+      var toPath = workspace ? `/workspace/${workspace._id}` : "/workspace";
+      if (toPath !== this.$route.path) {
+        this.$router.replace(toPath);
+      }
     }
   },
   async created() {
@@ -110,12 +116,12 @@ export default {
 <template>
   <v-content class="data">
     <NavigationBar />
-    <v-navigation-drawer permanent app clipped dark width="300">
+    <v-navigation-drawer permanent app clipped dark width="360">
       <v-subheader>Workspaces</v-subheader>
       <v-expansion-panels accordion v-model="panelIndex">
         <v-expansion-panel v-for="workspace in workspaces" :key="workspace._id">
           <v-expansion-panel-header>
-            {{ workspace._id }}
+            {{ workspace.name }}
             <v-spacer /><v-btn
               text
               icon
@@ -137,44 +143,40 @@ export default {
         </v-expansion-panel>
       </v-expansion-panels>
     </v-navigation-drawer>
-
-    <v-row class="fill-height" no-gutters>
-      <template v-if="selectedWorkspace">
-        <v-col>
-          <v-row class="flex-column fill-height pa-2" no-gutters>
+    <v-row class="flex-column fill-height" no-gutters>
+      <v-col v-if="selectedWorkspace" class="flex-grow-0">
+        <v-toolbar class="flex-grow-0" dense flat dark>
+          <v-btn small @click="showViewFilterDialog = true">Filter history</v-btn>
+        </v-toolbar>
+      </v-col>
+      <v-col>
+        <v-row class="fill-height" no-gutters>
+          <template v-if="selectedWorkspace">
             <v-col>
-              <PhylogeneticDistribution v-if="filter" :filter="filter" />
+              <v-row class="flex-column fill-height" no-gutters>
+                <v-col>
+                  <PhylogeneticDistribution v-if="filter" :filter="filter" />
+                </v-col>
+                <v-col>
+                  <FunctionalDiversity v-if="filter" :filter="filter" />
+                </v-col>
+              </v-row>
             </v-col>
-            <v-col>
-              <FunctionalDiversity v-if="filter" :filter="filter" />
+            <v-col class="">
+              <JobList />
             </v-col>
-          </v-row>
-        </v-col>
-        <v-col>
-          <div
-            class="children table-container"
-            style="flex-grow:2;min-height:0;"
-          >
-            <v-data-table
-              v-if="records"
-              height="100%"
-              :headers="[
-                { text: 'ID', value: '_id', sortable: false },
-                { text: 'Name', value: 'meta.name', sortable: false }
-              ]"
-              :items="records.data"
-              :server-items-length="records.count"
-              :options.sync="options"
-              :loading="$asyncComputed.records.updating"
-            >
-            </v-data-table>
+          </template>
+          <div v-else class="flex-grow-1 align-self-center text-center">
+            Select a workspace
           </div>
-        </v-col>
-      </template>
-      <div v-else class="flex-grow-1 align-self-center text-center">
-        Select a workspace
-      </div>
+        </v-row>
+      </v-col>
     </v-row>
+    <ViewFilterDialog
+      v-if="selectedWorkspace"
+      v-model="showViewFilterDialog"
+      :filter="selectedWorkspace.meta.filter"
+    />
   </v-content>
 </template>
 

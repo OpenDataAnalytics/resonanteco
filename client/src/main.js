@@ -6,6 +6,7 @@ import snackbarService from "vue-utilities/snackbar-service";
 import promptService from "vue-utilities/prompt-service";
 import vueNumeralFilterInstaller from "vue-numeral-filter";
 import Girder, { RestClient } from "@girder/components/src";
+import NotificationBus from "@girder/components/src/utils/notifications";
 import ResonantGeo from "resonantgeo";
 
 import App from "@/App.vue";
@@ -27,6 +28,8 @@ Vue.use(vueNumeralFilterInstaller);
 Vue.use(ResonantGeo);
 
 girder.rest = new RestClient({ apiRoot: API_URL });
+const notificationBus = new NotificationBus(girder.rest);
+notificationBus.connect();
 
 Vue.config.productionTip = true;
 
@@ -36,7 +39,7 @@ girder.rest.fetchUser().then(() => {
     store,
     render: h => h(App),
     vuetify,
-    provide: { girderRest: girder.rest }
+    provide: { girderRest: girder.rest, notificationBus }
   })
     .$mount("#app")
     .$snackbarAttach()

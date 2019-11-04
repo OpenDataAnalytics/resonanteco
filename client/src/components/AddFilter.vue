@@ -41,8 +41,8 @@ export default {
         this.valueRange[1] !== this.fieldMeta.max
       ) {
         filter[this.selectedField] = {
-          $gt: this.valueRange[0],
-          $lt: this.valueRange[1]
+          gt: parseFloat(this.valueRange[0].toFixed(4)),
+          lt: parseFloat(this.valueRange[1].toFixed(4))
         };
       }
       if (this.includeFilter) {

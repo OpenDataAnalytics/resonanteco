@@ -26,7 +26,9 @@ export default {
         itemsPerPage: 10,
         page: 1
       },
-      addFilterDialog: false
+      addFilterDialog: false,
+      inputWorkspaceName: false,
+      workspaceName: ""
     };
   },
   computed: {
@@ -108,6 +110,9 @@ export default {
       this.$delete(this.additionalFilters, property);
     },
     async createWorkspace() {
+      if (!this.workspaceName) {
+        return;
+      }
       var { data: records } = await this.girderRest.get("record/filtered", {
         params: {
           fields: JSON.stringify(["1"]),
@@ -115,7 +120,9 @@ export default {
         }
       });
       var { data: workspace } = await this.girderRest.post("workspace", {
-        datasets: records.data.map(record => record._id)
+        name: this.workspaceName,
+        datasets: records.data.map(record => record._id),
+        filter: this.filter
       });
       this.$router.push(`/workspace/${workspace._id}`);
     }
@@ -126,7 +133,7 @@ export default {
 <template>
   <v-content class="data">
     <NavigationBar />
-    <v-navigation-drawer app permanent clipped dark width="300">
+    <v-navigation-drawer app permanent clipped dark width="360">
       <v-subheader
         >Filters<v-spacer /><v-btn
           outlined
@@ -198,7 +205,7 @@ export default {
             ></v-expansion-panel-header
           >
           <v-expansion-panel-content>
-            {{ value.$gt }} ~ {{ value.$lt }}
+            {{ value.gt }} ~ {{ value.lt }}
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -207,14 +214,24 @@ export default {
       <v-toolbar class="flex-grow-0" dense flat dark>
         <v-spacer />
         <v-btn
-          light
+          v-if="!inputWorkspaceName"
           small
           min-height="30"
           :disabled="!records || !records.count || records.count > 100"
-          @click="createWorkspace"
+          @click="inputWorkspaceName = true"
         >
-          Create workspace
+          <div><div>Create workspace</div><div style="font-size: 80%;    text-transform: initial;">with filtered data</div></div>
         </v-btn>
+        <div v-else style="width: 300px;">
+          <v-text-field
+            dense
+            hide-details
+            v-model="workspaceName"
+            placeholder="Workspace name"
+            append-outer-icon="mdi-check"
+            @click:append-outer="createWorkspace"
+          ></v-text-field>
+        </div>
       </v-toolbar>
       <div class="children" style="flex-grow:1;">
         <DataInsight :filter="filter" />

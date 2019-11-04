@@ -5,6 +5,9 @@ from setuptools import setup, find_packages
 
 requirements = [
     'girder==3.0.3',
+    'girder_jobs==3.0.3',
+    'girder_worker',
+    'girder_worker_utils',
     'girder-client'
 ]
 
