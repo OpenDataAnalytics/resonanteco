@@ -18,7 +18,7 @@
     "vue-google-charts": "^0.3.2",
     "vue-numeral-filter": "^1.1.1",
     "vue-router": "^3.0.3",
-    "vue-utilities": "git+https://github.com/Kitware/vue-utilities.git#vuetify-2",
+    "vue-utilities": "git+https://github.com/Kitware/vue-utilities.git",
     "vuetify": "^2.1.7",
     "vuex": "^3.0.1"
   },
