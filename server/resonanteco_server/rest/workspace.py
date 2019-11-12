@@ -27,9 +27,11 @@ class Workspace(Resource):
         .errorResponse())
     def getWorkspace(self, params):
         user = self.getCurrentUser()
-        return Item().findWithPermissions({
+        workspaces = list(Item().findWithPermissions({
             'meta.resonanteco_workspace': True,
-        }, user=user, level=AccessType.READ).sort('updated', -1)
+        }, user=user, level=AccessType.READ))
+        workspaces.sort(key=lambda item: item['updated'], reverse=True)
+        return workspaces
 
     @access.user
     @autoDescribeRoute(
